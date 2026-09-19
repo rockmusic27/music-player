@@ -1,1211 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Rock Music Player</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html,
-    body {
-      width: 100%;
-      min-height: 100%;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #fff;
-      background:
-        radial-gradient(
-          circle at 20% 10%,
-          rgba(90, 90, 90, 0.35),
-          transparent 30%
-        ),
-        radial-gradient(
-          circle at 85% 85%,
-          rgba(100, 20, 20, 0.18),
-          transparent 35%
-        ),
-        linear-gradient(
-          135deg,
-          #020202 0%,
-          #0c0c0c 45%,
-          #242424 100%
-        );
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      padding: 30px 15px;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-
-    /* =========================================
-       GUITAR STRING BACKGROUND
-       ========================================= */
-
-    body::before {
-      content: "";
-
-      position: fixed;
-
-      top: -20%;
-      right: 10%;
-
-      width: 2px;
-      height: 150%;
-
-      background: rgba(255, 255, 255, 0.12);
-
-      transform: rotate(12deg);
-
-      box-shadow:
-        18px 0 rgba(255, 255, 255, 0.08),
-        36px 0 rgba(255, 255, 255, 0.06),
-        54px 0 rgba(255, 255, 255, 0.05),
-        72px 0 rgba(255, 255, 255, 0.04),
-        90px 0 rgba(255, 255, 255, 0.03);
-
-      pointer-events: none;
-      z-index: 0;
-    }
-
-
-    /* =========================================
-       GRUNGE SCREEN EFFECT
-       ========================================= */
-
-    body::after {
-      content: "";
-
-      position: fixed;
-      inset: 0;
-
-      background:
-        repeating-linear-gradient(
-          0deg,
-          transparent 0px,
-          transparent 5px,
-          rgba(255, 255, 255, 0.018) 6px
-        );
-
-      pointer-events: none;
-      z-index: 0;
-    }
-
-
-    /* =========================================
-       BACKGROUND BAND MARKS
-       ========================================= */
-
-    .bg-logo {
-      position: fixed;
-
-      color: #fff;
-
-      font-weight: 900;
-
-      letter-spacing: 6px;
-
-      opacity: 0.065;
-
-      pointer-events: none;
-
-      user-select: none;
-
-      z-index: 1;
-
-      text-align: center;
-
-      text-transform: uppercase;
-
-      white-space: nowrap;
-    }
-
-    .logo-nirvana {
-      top: 8%;
-      left: -20px;
-
-      font-size: clamp(42px, 8vw, 100px);
-
-      transform: rotate(-12deg);
-    }
-
-    .logo-deftones {
-      bottom: 8%;
-      right: -30px;
-
-      font-size: clamp(42px, 8vw, 100px);
-
-      transform: rotate(-10deg);
-    }
-
-    .logo-tdg {
-      top: 42%;
-      left: -55px;
-
-      font-size: clamp(24px, 5vw, 60px);
-
-      line-height: 0.85;
-
-      transform: rotate(-90deg);
-    }
-
-    .logo-rock {
-      top: 20%;
-      right: -45px;
-
-      font-size: clamp(25px, 5vw, 60px);
-
-      transform: rotate(90deg);
-
-      letter-spacing: 10px;
-    }
-
-
-    /* =========================================
-       MAIN PLAYER
-       ========================================= */
-
-    .player {
-      width: 100%;
-      max-width: 440px;
-
-      padding: 28px;
-
-      background: rgba(8, 8, 8, 0.92);
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-
-      border-radius: 20px;
-
-      box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.85),
-        0 0 40px rgba(255, 255, 255, 0.04);
-
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-
-      text-align: center;
-
-      position: relative;
-
-      z-index: 5;
-    }
-
-
-    /* =========================================
-       BAND TAGS
-       ========================================= */
-
-    .bands {
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      flex-wrap: wrap;
-
-      gap: 7px;
-
-      margin-bottom: 22px;
-    }
-
-    .band {
-      font-size: 9px;
-
-      letter-spacing: 1.7px;
-
-      color: #cfcfcf;
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-
-      background: rgba(255, 255, 255, 0.04);
-
-      padding: 7px 9px;
-
-      border-radius: 20px;
-
-      transition: 0.2s;
-    }
-
-    .band:hover {
-      background: rgba(255, 255, 255, 0.10);
-
-      border-color: rgba(255, 255, 255, 0.4);
-
-      color: #fff;
-    }
-
-
-    /* =========================================
-       TITLE
-       ========================================= */
-
-    h1 {
-      margin: 0 0 24px;
-
-      font-size: 25px;
-
-      font-weight: 700;
-
-      letter-spacing: 4px;
-
-      text-transform: uppercase;
-
-      text-shadow:
-        2px 2px 0 #000,
-        0 0 15px rgba(255, 255, 255, 0.12);
-    }
-
-
-    /* =========================================
-       COVER
-       ========================================= */
-
-    .cover {
-      width: 240px;
-      height: 240px;
-
-      margin: 0 auto 22px;
-
-      border-radius: 14px;
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-
-      background:
-        radial-gradient(
-          circle at center,
-          #444 0%,
-          #1b1b1b 35%,
-          #050505 75%
-        );
-
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      position: relative;
-
-      overflow: hidden;
-
-      box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.8);
-    }
-
-
-    .cover::before {
-      content: "ROCK";
-
-      position: absolute;
-
-      font-size: 55px;
-
-      font-weight: bold;
-
-      letter-spacing: 10px;
-
-      color: rgba(255, 255, 255, 0.05);
-
-      transform: rotate(-15deg);
-    }
-
-
-    .cover::after {
-      content: "";
-
-      position: absolute;
-
-      width: 160px;
-      height: 160px;
-
-      border:
-        1px solid rgba(255, 255, 255, 0.10);
-
-      border-radius: 50%;
-
-      box-shadow:
-        0 0 0 20px rgba(255, 255, 255, 0.025),
-        0 0 0 40px rgba(255, 255, 255, 0.018),
-        0 0 0 60px rgba(255, 255, 255, 0.012);
-    }
-
-
-    .cover-text {
-      position: relative;
-
-      z-index: 2;
-
-      color: #aaa;
-
-      font-size: 12px;
-
-      letter-spacing: 3px;
-    }
-
-
-    /* =========================================
-       SONG INFO
-       ========================================= */
-
-    .song-title {
-      font-size: 21px;
-
-      font-weight: bold;
-
-      letter-spacing: 1px;
-
-      margin-bottom: 6px;
-    }
-
-    .artist {
-      color: #888;
-
-      font-size: 14px;
-
-      margin-bottom: 20px;
-    }
-
-
-    /* =========================================
-       PROGRESS BAR
-       ========================================= */
-
-    .progress-area {
-      width: 100%;
-
-      margin-top: 10px;
-    }
-
-    #progress {
-      width: 100%;
-
-      height: 5px;
-
-      cursor: pointer;
-
-      accent-color: white;
-    }
-
-    .time {
-      display: flex;
-
-      justify-content: space-between;
-
-      color: #777;
-
-      font-size: 11px;
-
-      margin-top: 5px;
-    }
-
-
-    /* =========================================
-       CONTROLS
-       ========================================= */
-
-    .controls {
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      gap: 18px;
-
-      margin: 22px 0;
-    }
-
-    button {
-      width: 52px;
-      height: 52px;
-
-      border-radius: 50%;
-
-      border:
-        1px solid rgba(255, 255, 255, 0.25);
-
-      background: #111;
-
-      color: #fff;
-
-      font-size: 18px;
-
-      cursor: pointer;
-
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      transition: 0.2s;
-
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    button:hover {
-      background: #292929;
-
-      border-color: #fff;
-
-      transform: scale(1.08);
-    }
-
-    button:active {
-      transform: scale(0.95);
-    }
-
-
-    .play-button {
-      width: 70px;
-      height: 70px;
-
-      background: #050505;
-
-      border: 2px solid #fff;
-
-      color: #fff;
-
-      font-size: 23px;
-
-      box-shadow:
-        0 0 20px rgba(255, 255, 255, 0.10),
-        0 10px 30px rgba(0, 0, 0, 0.7);
-    }
-
-    .play-button:hover {
-      background: #222;
-
-      border-color: #fff;
-    }
-
-
-    /* =========================================
-       PLAYLIST
-       ========================================= */
-
-    .playlist {
-      margin-top: 20px;
-
-      padding-top: 16px;
-
-      border-top:
-        1px solid rgba(255, 255, 255, 0.10);
-
-      text-align: left;
-    }
-
-    .playlist-title {
-      color: #777;
-
-      font-size: 10px;
-
-      letter-spacing: 2px;
-
-      text-transform: uppercase;
-
-      margin-bottom: 8px;
-    }
-
-    .song {
-      display: flex;
-
-      align-items: center;
-
-      padding: 12px;
-
-      margin-bottom: 5px;
-
-      border-radius: 8px;
-
-      cursor: pointer;
-
-      color: #aaa;
-
-      font-size: 13px;
-
-      transition: 0.2s;
-
-      border-left:
-        3px solid transparent;
-    }
-
-    .song:hover {
-      background: rgba(255, 255, 255, 0.06);
-
-      color: #fff;
-    }
-
-    .song.active {
-      background: rgba(255, 255, 255, 0.09);
-
-      color: #fff;
-
-      border-left:
-        3px solid #fff;
-    }
-
-    .number {
-      color: #555;
-
-      margin-right: 12px;
-
-      font-size: 11px;
-    }
-
-
-    /* =========================================
-       MOBILE
-       ========================================= */
-
-    @media (max-width: 500px) {
-
-      body {
-        padding: 18px 10px;
-      }
-
-      .player {
-        padding: 22px 17px;
-      }
-
-      .cover {
-        width: 210px;
-        height: 210px;
-      }
-
-      h1 {
-        font-size: 21px;
-
-        letter-spacing: 3px;
-      }
-
-      .band {
-        font-size: 8px;
-
-        padding: 6px 7px;
-      }
-
-      .bg-logo {
-        opacity: 0.04;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Player</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, #252525 0%, transparent 30%),
+    radial-gradient(circle at 80% 80%, #1c1c1c 0%, transparent 30%),
+    linear-gradient(135deg, #050505, #111, #050505);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Guitar strings */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 8%;
+  width: 1px;
+  height: 100%;
+  background: rgba(255,255,255,0.15);
+  box-shadow:
+    120px 0 rgba(255,255,255,0.10),
+    240px 0 rgba(255,255,255,0.08),
+    360px 0 rgba(255,255,255,0.06),
+    480px 0 rgba(255,255,255,0.05),
+    600px 0 rgba(255,255,255,0.04),
+    720px 0 rgba(255,255,255,0.03);
+  pointer-events: none;
+}
+
+.bg-text {
+  position: fixed;
+  font-weight: 900;
+  color: rgba(255,255,255,0.035);
+  font-size: 80px;
+  letter-spacing: 8px;
+  transform: rotate(-12deg);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.bg1 {
+  top: 8%;
+  left: -10px;
+}
+
+.bg2 {
+  bottom: 18%;
+  right: -30px;
+  transform: rotate(12deg);
+}
+
+.bg3 {
+  top: 48%;
+  left: -30px;
+  font-size: 55px;
+  transform: rotate(-8deg);
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  padding: 25px 18px 40px;
+}
+
+.tags {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.tag {
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #ddd;
+  background: rgba(0,0,0,0.5);
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0 25px;
+  font-size: 32px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.cover {
+  width: 240px;
+  height: 240px;
+  margin: auto;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #222 0%, #111 45%, #050505 70%);
+  border: 3px solid #555;
+  box-shadow:
+    0 0 0 8px rgba(255,255,255,0.03),
+    0 15px 50px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: "ROCK";
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.12);
+  transform: rotate(-25deg);
+}
+
+.cover::after {
+  content: "";
+  position: absolute;
+  width: 130%;
+  height: 2px;
+  background: rgba(255,255,255,0.15);
+  transform: rotate(-25deg);
+  box-shadow:
+    0 20px rgba(255,255,255,0.08),
+    0 -20px rgba(255,255,255,0.08);
+}
+
+.song-info {
+  text-align: center;
+  margin-top: 22px;
+}
+
+#title {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+#artist {
+  color: #999;
+  font-size: 14px;
+}
+
+audio {
+  display: none;
+}
+
+.progress-area {
+  margin-top: 25px;
+}
+
+.progress {
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  background: #333;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.progress::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+}
+
+.time {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 11px;
+  margin-top: 7px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 25px 0;
+}
+
+.controls button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #555;
+  background: #090909;
+  color: white;
+  cursor: pointer;
+  font-size: 17px;
+  transition: 0.2s;
+}
+
+.controls button:hover {
+  background: #222;
+  border-color: white;
+}
+
+.controls .play {
+  width: 62px;
+  height: 62px;
+  font-size: 22px;
+  background: white;
+  color: black;
+  border: none;
+}
+
+.controls .play:hover {
+  background: #ddd;
+}
+
+.playlist {
+  margin-top: 20px;
+}
+
+.playlist-title {
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.song {
+  padding: 14px;
+  border: 1px solid #222;
+  background: rgba(10,10,10,0.8);
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.song:hover,
+.song.active {
+  border-color: #666;
+  background: #181818;
+}
+
+.song-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.song-artist {
+  font-size: 11px;
+  color: #777;
+  margin-top: 4px;
+}
+
+footer {
+  text-align: center;
+  color: #444;
+  font-size: 10px;
+  margin-top: 30px;
+  letter-spacing: 2px;
+}
+</style>
 </head>
-
 
 <body>
 
+<div class="bg-text bg1">NIRVANA</div>
+<div class="bg-text bg2">DEFTONES</div>
+<div class="bg-text bg3">THREE DAYS GRACE</div>
 
-  <!-- =========================================
-       BACKGROUND BAND MARKS
-       ========================================= -->
+<div class="container">
 
-  <div class="bg-logo logo-nirvana">
-    NIRVANA
+  <div class="tags">
+    <div class="tag">NIRVANA</div>
+    <div class="tag">DEFTONES</div>
+    <div class="tag">THREE DAYS GRACE</div>
   </div>
 
-  <div class="bg-logo logo-deftones">
-    DEFTONES
+  <h1>Rock Player</h1>
+
+  <div class="cover"></div>
+
+  <div class="song-info">
+    <div id="title">Heart-Shaped Box</div>
+    <div id="artist">Nirvana</div>
   </div>
 
-  <div class="bg-logo logo-tdg">
-    THREE DAYS GRACE
-  </div>
-
-  <div class="bg-logo logo-rock">
-    ROCK
-  </div>
-
-
-  <!-- =========================================
-       MUSIC PLAYER
-       ========================================= -->
-
-  <main class="player">
-
-
-    <!-- BAND TAGS -->
-
-    <div class="bands">
-
-      <div class="band">
-        NIRVANA
-      </div>
-
-      <div class="band">
-        DEFTONES
-      </div>
-
-      <div class="band">
-        THREE DAYS GRACE
-      </div>
-
-    </div>
-
-
-    <!-- TITLE -->
-
-    <h1>
-      Rock Player
-    </h1>
-
-
-    <!-- COVER -->
-
-    <div class="cover">
-
-      <div class="cover-text">
-        ROCK / GRUNGE
-      </div>
-
-    </div>
-
-
-    <!-- CURRENT SONG -->
-
-    <div
-      class="song-title"
-      id="title"
+  <div class="progress-area">
+    <input
+      type="range"
+      id="progress"
+      class="progress"
+      value="0"
+      min="0"
+      max="100"
     >
-      Song One
+
+    <div class="time">
+      <span id="currentTime">0:00</span>
+      <span id="duration">0:00</span>
     </div>
+  </div>
+
+  <audio id="audio"></audio>
+
+  <div class="controls">
+    <button onclick="prevSong()">⏮</button>
+    <button class="play" onclick="togglePlay()" id="playBtn">▶</button>
+    <button onclick="nextSong()">⏭</button>
+  </div>
+
+  <div class="playlist">
+    <div class="playlist-title">Playlist</div>
+    <div id="playlist"></div>
+  </div>
+
+  <footer>
+    ROCK PLAYER
+  </footer>
+
+</div>
+
+<script>
+
+const songs = [
+  {
+    title: "Heart-Shaped Box",
+    artist: "Nirvana",
+    url: "8_144453842814116031.mp3"
+  },
+  {
+    title: "Pink Maggit",
+    artist: "Deftones",
+    url: "8_144492326763558406.mp3"
+  },
+  {
+    title: "Kill Me Fast",
+    artist: "Three Days Grace",
+    url: "Kill%20Me%20Fast.mp3"
+  }
+];
+
+let currentSong = 0;
+
+const audio = document.getElementById("audio");
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+const playBtn = document.getElementById("playBtn");
+const progress = document.getElementById("progress");
+const currentTime = document.getElementById("currentTime");
+const duration = document.getElementById("duration");
+const playlist = document.getElementById("playlist");
+
+function loadSong(index) {
+  currentSong = index;
+
+  const song = songs[index];
+
+  title.textContent = song.title;
+  artist.textContent = song.artist;
+
+  audio.src = song.url;
+
+  updatePlaylist();
+}
+
+function togglePlay() {
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = "❚❚";
+  } else {
+    audio.pause();
+    playBtn.textContent = "▶";
+  }
+}
+
+function nextSong() {
+  currentSong++;
+
+  if (currentSong >= songs.length) {
+    currentSong = 0;
+  }
+
+  loadSong(currentSong);
+  audio.play();
+  playBtn.textContent = "❚❚";
+}
+
+function prevSong() {
+  currentSong--;
+
+  if (currentSong < 0) {
+    currentSong = songs.length - 1;
+  }
+
+  loadSong(currentSong);
+  audio.play();
+  playBtn.textContent = "❚❚";
+}
+
+function updatePlaylist() {
+  playlist.innerHTML = "";
 
-    <div
-      class="artist"
-      id="artist"
-    >
-      Artist One
-    </div>
+  songs.forEach((song, index) => {
 
+    const div = document.createElement("div");
 
-    <!-- AUDIO -->
+    div.className = "song";
 
-    <audio id="audio"></audio>
-
-
-    <!-- PROGRESS -->
-
-    <div class="progress-area">
-
-      <input
-        type="range"
-        id="progress"
-        min="0"
-        max="100"
-        value="0"
-      >
-
-      <div class="time">
-
-        <span id="currentTime">
-          0:00
-        </span>
-
-        <span id="duration">
-          0:00
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <!-- CONTROLS -->
-
-    <div class="controls">
-
-      <button
-        id="prev"
-        title="Previous"
-      >
-        ⏮
-      </button>
-
-
-      <button
-        id="play"
-        class="play-button"
-        title="Play / Pause"
-      >
-        ▶
-      </button>
-
-
-      <button
-        id="next"
-        title="Next"
-      >
-        ⏭
-      </button>
-
-    </div>
-
-
-    <!-- PLAYLIST -->
-
-    <div class="playlist">
-
-      <div class="playlist-title">
-        Playlist
-      </div>
-
-
-      <div
-        class="song active"
-        data-index="0"
-      >
-
-        <span>
-          <span class="number">
-            01
-          </span>
-
-          Song One
-        </span>
-
-      </div>
-
-
-      <div
-        class="song"
-        data-index="1"
-      >
-
-        <span>
-          <span class="number">
-            02
-          </span>
-
-          Song Two
-        </span>
-
-      </div>
-
-
-      <div
-        class="song"
-        data-index="2"
-      >
-
-        <span>
-          <span class="number">
-            03
-          </span>
-
-          Song Three
-        </span>
-
-      </div>
-
-    </div>
-
-  </main>
-
-
-
-  <!-- =========================================
-       JAVASCRIPT
-       ========================================= -->
-
-  <script>
-
-
-    /* =========================================
-       SONG LIST
-       ========================================= */
-
-    const songs = [
-
-      {
-        title: "Song One",
-        artist: "Artist One",
-        url: "SONG_1_URL"
-      },
-
-      {
-        title: "Song Two",
-        artist: "Artist Two",
-        url: "SONG_2_URL"
-      },
-
-      {
-        title: "Song Three",
-        artist: "Artist Three",
-        url: "SONG_3_URL"
-      }
-
-    ];
-
-
-    /* =========================================
-       VARIABLES
-       ========================================= */
-
-    let currentSong = 0;
-
-
-    const audio =
-      document.getElementById("audio");
-
-    const playButton =
-      document.getElementById("play");
-
-    const prevButton =
-      document.getElementById("prev");
-
-    const nextButton =
-      document.getElementById("next");
-
-    const progress =
-      document.getElementById("progress");
-
-    const title =
-      document.getElementById("title");
-
-    const artist =
-      document.getElementById("artist");
-
-    const currentTime =
-      document.getElementById("currentTime");
-
-    const duration =
-      document.getElementById("duration");
-
-    const playlist =
-      document.querySelectorAll(".song");
-
-
-    /* =========================================
-       LOAD SONG
-       ========================================= */
-
-    function loadSong(index) {
-
-      const song = songs[index];
-
-      title.textContent =
-        song.title;
-
-      artist.textContent =
-        song.artist;
-
-      audio.src =
-        song.url;
-
-
-      playlist.forEach(item => {
-
-        item.classList.remove("active");
-
-      });
-
-
-      playlist[index]
-        .classList.add("active");
-
-
-      progress.value = 0;
-
-      currentTime.textContent = "0:00";
-
-      duration.textContent = "0:00";
-
+    if (index === currentSong) {
+      div.classList.add("active");
     }
 
+    div.innerHTML = `
+      <div class="song-name">${song.title}</div>
+      <div class="song-artist">${song.artist}</div>
+    `;
 
-    /* =========================================
-       PLAY
-       ========================================= */
+    div.onclick = function() {
+      loadSong(index);
+      audio.play();
+      playBtn.textContent = "❚❚";
+    };
 
-    function playMusic() {
+    playlist.appendChild(div);
+  });
+}
 
-      audio.play()
-        .then(() => {
+audio.addEventListener("loadedmetadata", function() {
+  duration.textContent = formatTime(audio.duration);
+});
 
-          playButton.textContent = "❚❚";
+audio.addEventListener("timeupdate", function() {
 
-        })
-        .catch(() => {
+  if (!audio.duration) return;
 
-          playButton.textContent = "▶";
+  progress.value =
+    (audio.currentTime / audio.duration) * 100;
 
-        });
+  currentTime.textContent =
+    formatTime(audio.currentTime);
+});
 
-    }
+progress.addEventListener("input", function() {
 
+  if (!audio.duration) return;
 
-    /* =========================================
-       PAUSE
-       ========================================= */
+  audio.currentTime =
+    (progress.value / 100) * audio.duration;
+});
 
-    function pauseMusic() {
+audio.addEventListener("ended", function() {
+  nextSong();
+});
 
-      audio.pause();
+function formatTime(seconds) {
 
-      playButton.textContent =
-        "▶";
+  if (isNaN(seconds)) {
+    return "0:00";
+  }
 
-    }
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
 
+  return minutes + ":" +
+    (secs < 10 ? "0" : "") +
+    secs;
+}
 
-    /* =========================================
-       PLAY / PAUSE BUTTON
-       ========================================= */
+loadSong(0);
 
-    playButton.addEventListener(
-      "click",
-      () => {
-
-        if (audio.paused) {
-
-          playMusic();
-
-        } else {
-
-          pauseMusic();
-
-        }
-
-      }
-    );
-
-
-    /* =========================================
-       PREVIOUS
-       ========================================= */
-
-    prevButton.addEventListener(
-      "click",
-      () => {
-
-        currentSong--;
-
-        if (currentSong < 0) {
-
-          currentSong =
-            songs.length - 1;
-
-        }
-
-        loadSong(currentSong);
-
-        playMusic();
-
-      }
-    );
-
-
-    /* =========================================
-       NEXT
-       ========================================= */
-
-    nextButton.addEventListener(
-      "click",
-      () => {
-
-        currentSong++;
-
-        if (
-          currentSong >=
-          songs.length
-        ) {
-
-          currentSong = 0;
-
-        }
-
-        loadSong(currentSong);
-
-        playMusic();
-
-      }
-    );
-
-
-    /* =========================================
-       UPDATE PROGRESS
-       ========================================= */
-
-    audio.addEventListener(
-      "timeupdate",
-      () => {
-
-        if (!audio.duration) {
-          return;
-        }
-
-
-        const percentage =
-          (
-            audio.currentTime /
-            audio.duration
-          ) * 100;
-
-
-        progress.value =
-          percentage;
-
-
-        currentTime.textContent =
-          formatTime(
-            audio.currentTime
-          );
-
-      }
-    );
-
-
-    /* =========================================
-       AUDIO DURATION
-       ========================================= */
-
-    audio.addEventListener(
-      "loadedmetadata",
-      () => {
-
-        duration.textContent =
-          formatTime(
-            audio.duration
-          );
-
-      }
-    );
-
-
-    /* =========================================
-       SEEK
-       ========================================= */
-
-    progress.addEventListener(
-      "input",
-      () => {
-
-        if (!audio.duration) {
-          return;
-        }
-
-
-        audio.currentTime =
-          (
-            progress.value / 100
-          ) * audio.duration;
-
-      }
-    );
-
-
-    /* =========================================
-       AUTO NEXT
-       ========================================= */
-
-    audio.addEventListener(
-      "ended",
-      () => {
-
-        currentSong++;
-
-        if (
-          currentSong >=
-          songs.length
-        ) {
-
-          currentSong = 0;
-
-        }
-
-        loadSong(currentSong);
-
-        playMusic();
-
-      }
-    );
-
-
-    /* =========================================
-       PLAYLIST CLICK
-       ========================================= */
-
-    playlist.forEach(
-      item => {
-
-        item.addEventListener(
-          "click",
-          () => {
-
-            currentSong =
-              Number(
-                item.dataset.index
-              );
-
-            loadSong(currentSong);
-
-            playMusic();
-
-          }
-        );
-
-      }
-    );
-
-
-    /* =========================================
-       FORMAT TIME
-       ========================================= */
-
-    function formatTime(seconds) {
-
-      if (isNaN(seconds)) {
-
-        return "0:00";
-
-      }
-
-
-      const minutes =
-        Math.floor(
-          seconds / 60
-        );
-
-
-      const secondsPart =
-        Math.floor(
-          seconds % 60
-        );
-
-
-      return (
-        minutes +
-        ":" +
-        (
-          secondsPart < 10
-            ? "0"
-            : ""
-        ) +
-        secondsPart
-      );
-
-    }
-
-
-    /* =========================================
-       INITIAL LOAD
-       ========================================= */
-
-    loadSong(currentSong);
-
-  </script>
+</script>
 
 </body>
 </html>
