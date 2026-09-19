@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پلیر موزیک من</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #111827, #312e81);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .player {
+      width: 90%;
+      max-width: 420px;
+      background: rgba(255,255,255,0.1);
+      padding: 25px;
+      border-radius: 25px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .cover {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-size: 24px;
+    }
+
+    .artist {
+      opacity: 0.7;
+      margin-bottom: 20px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .buttons {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .play {
+      width: 70px;
+      height: 70px;
+      font-size: 25px;
+    }
+
+    .playlist {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .song {
+      padding: 12px;
+      margin: 7px 0;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .song.active {
+      background: rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="player">
+
+  <img id="cover" class="cover"
+       src="https://via.placeholder.com/400"
+       alt="کاور آهنگ">
+
+  <h1 id="title">آهنگ ۱</h1>
+  <div id="artist" class="artist">هنرمند</div>
+
+  <audio id="audio"></audio>
+
+  <input id="progress" type="range" value="0" min="0" max="100">
+
+  <div class="time">
+    <span id="current">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+
+  <div class="buttons">
+    <button onclick="previousSong()">⏮</button>
+    <button class="play" id="playBtn" onclick="togglePlay()">▶</button>
+    <button onclick="nextSong()">⏭</button>
+  </div>
+
+  <div class="playlist" id="playlist"></div>
+
+</div>
+
+<script>
+
+const songs = [
+  {
+    title: "آهنگ ۱",
+    artist: "هنرمند",
+    url: "SONG_1_URL"
+  },
+  {
+    title: "آهنگ ۲",
+    artist: "هنرمند",
+    url: "SONG_2_URL"
+  },
+  {
+    title: "آهنگ ۳",
+    artist: "هنرمند",
+    url: "SONG_3_URL"
+  }
+];
+
+const audio = document.getElementById("audio");
+const title = document.getElementById("title");
+const artist = document.getElementById("artist");
+const progress = document.getElementById("progress");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
+const playBtn = document.getElementById("playBtn");
+const playlist = document.getElementById("playlist");
+
+let currentSong = 0;
+
+function loadSong(index) {
+  currentSong = index;
+
+  const song = songs[index];
+
+  title.textContent = song.title;
+  artist.textContent = song.artist;
+  audio.src = song.url;
+
+  playlist.innerHTML = "";
+
+  songs.forEach((item, i) => {
+    const div = document.createElement("div");
+
+    div.className = "song" + (i === currentSong ? " active" : "");
+
+    div.textContent = item.title;
+
+    div.onclick = () => {
+      loadSong(i);
+      audio.play();
+      playBtn.textContent = "⏸";
+    };
+
+    playlist.appendChild(div);
+  });
+}
+
+function togglePlay() {
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = "⏸";
+  } else {
+    audio.pause();
+    playBtn.textContent = "▶";
+  }
+}
+
+function previousSong() {
+  currentSong--;
+
+  if (currentSong < 0) {
+    currentSong = songs.length - 1;
+  }
+
+  loadSong(currentSong);
+  audio.play();
+  playBtn.textContent = "⏸";
+}
+
+function nextSong() {
+  currentSong++;
+
+  if (currentSong >= songs.length) {
+    currentSong = 0;
+  }
+
+  loadSong(currentSong);
+  audio.play();
+  playBtn.textContent = "⏸";
+}
+
+audio.addEventListener("timeupdate", () => {
+  if (audio.duration) {
+    progress.value = (audio.currentTime / audio.duration) * 100;
+  }
+
+  current.textContent = formatTime(audio.currentTime);
+});
+
+audio.addEventListener("loadedmetadata", () => {
+  duration.textContent = formatTime(audio.duration);
+});
+
+progress.addEventListener("input", () => {
+  if (audio.duration) {
+    audio.currentTime =
+      (progress.value / 100) * audio.duration;
+  }
+});
+
+audio.addEventListener("ended", () => {
+  nextSong();
+});
+
+function formatTime(seconds) {
+  if (!seconds || isNaN(seconds)) {
+    return "0:00";
+  }
+
+  const min = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60);
+
+  return min + ":" + (sec < 10 ? "0" : "") + sec;
+}
+
+loadSong(0);
+
+</script>
+
+</body>
+  </html>
