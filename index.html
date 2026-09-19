@@ -1,262 +1,620 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پلیر موزیک من</title>
+
+  <title>My Music Player</title>
 
   <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #111827, #312e81);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .player {
-      width: 90%;
-      max-width: 420px;
-      background: rgba(255,255,255,0.1);
-      padding: 25px;
-      border-radius: 25px;
-      text-align: center;
+    * {
       box-sizing: border-box;
     }
 
-    .cover {
-      width: 220px;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 20px;
-      margin-bottom: 20px;
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      font-family: Arial, sans-serif;
+      color: white;
+
+      background:
+        radial-gradient(circle at top, #4a4a4a, transparent 40%),
+        linear-gradient(135deg, #050505, #252525);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 20px;
     }
 
-    h1 {
-      margin: 5px 0;
-      font-size: 24px;
+    .player {
+      width: 100%;
+      max-width: 430px;
+
+      padding: 28px;
+
+      border-radius: 28px;
+
+      background: rgba(255, 255, 255, 0.08);
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+
+      text-align: center;
+    }
+
+    .header {
+      font-size: 13px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+
+      opacity: 0.65;
+
+      margin-bottom: 25px;
+    }
+
+    .cover {
+      width: 230px;
+      height: 230px;
+
+      object-fit: cover;
+
+      border-radius: 22px;
+
+      margin-bottom: 22px;
+
+      background: #333;
+
+      box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .title {
+      font-size: 25px;
+      font-weight: bold;
+
+      margin: 5px 0 8px;
     }
 
     .artist {
-      opacity: 0.7;
-      margin-bottom: 20px;
+      font-size: 14px;
+
+      opacity: 0.6;
+
+      margin-bottom: 25px;
     }
 
-    input[type="range"] {
+    .progress-container {
+      margin-top: 10px;
+    }
+
+    #progress {
       width: 100%;
+
+      cursor: pointer;
+
+      accent-color: white;
     }
 
     .time {
       display: flex;
       justify-content: space-between;
+
       font-size: 12px;
-      opacity: 0.7;
+
+      opacity: 0.55;
+
+      margin-top: 5px;
     }
 
-    .buttons {
-      margin: 20px 0;
+    .controls {
       display: flex;
+
       justify-content: center;
-      gap: 15px;
+      align-items: center;
+
+      gap: 18px;
+
+      margin: 25px 0;
     }
 
     button {
+      width: 50px;
+      height: 50px;
+
       border: none;
       border-radius: 50%;
-      width: 55px;
-      height: 55px;
-      font-size: 20px;
+
+      background: rgba(255, 255, 255, 0.12);
+
+      color: white;
+
+      font-size: 18px;
+
       cursor: pointer;
+
+      transition: 0.2s;
     }
 
-    .play {
-      width: 70px;
-      height: 70px;
+    button:hover {
+      transform: scale(1.08);
+
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .play-button {
+      width: 68px;
+      height: 68px;
+
       font-size: 25px;
+
+      background: white;
+
+      color: #111;
+    }
+
+    .play-button:hover {
+      background: #eeeeee;
+    }
+
+    .playlist-title {
+      text-align: left;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      letter-spacing: 1px;
+
+      margin: 20px 0 10px;
+
+      opacity: 0.75;
     }
 
     .playlist {
-      margin-top: 20px;
-      text-align: right;
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 8px;
     }
 
     .song {
-      padding: 12px;
-      margin: 7px 0;
-      background: rgba(255,255,255,0.08);
-      border-radius: 12px;
+      display: flex;
+
+      align-items: center;
+
+      padding: 13px;
+
+      border-radius: 14px;
+
+      background: rgba(255, 255, 255, 0.06);
+
       cursor: pointer;
+
+      transition: 0.2s;
+
+      text-align: left;
+    }
+
+    .song:hover {
+      background: rgba(255, 255, 255, 0.13);
+
+      transform: translateY(-1px);
     }
 
     .song.active {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.18);
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .song-number {
+      width: 30px;
+
+      font-size: 13px;
+
+      opacity: 0.5;
+    }
+
+    .song-info {
+      flex: 1;
+    }
+
+    .song-name {
+      font-size: 14px;
+
+      font-weight: bold;
+    }
+
+    .song-artist {
+      font-size: 11px;
+
+      opacity: 0.5;
+
+      margin-top: 3px;
+    }
+
+    .footer {
+      margin-top: 22px;
+
+      font-size: 11px;
+
+      opacity: 0.35;
+    }
+
+    @media (max-width: 480px) {
+
+      .player {
+        padding: 22px;
+      }
+
+      .cover {
+        width: 200px;
+        height: 200px;
+      }
+
+      .title {
+        font-size: 22px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="player">
+  <div class="player">
 
-  <img id="cover" class="cover"
-       src="https://via.placeholder.com/400"
-       alt="کاور آهنگ">
+    <div class="header">
+      MY MUSIC
+    </div>
 
-  <h1 id="title">آهنگ ۱</h1>
-  <div id="artist" class="artist">هنرمند</div>
+    <img
+      id="cover"
+      class="cover"
+      src="https://via.placeholder.com/500"
+      alt="Album Cover"
+    >
 
-  <audio id="audio"></audio>
+    <div id="title" class="title">
+      Song 1
+    </div>
 
-  <input id="progress" type="range" value="0" min="0" max="100">
+    <div id="artist" class="artist">
+      Artist
+    </div>
 
-  <div class="time">
-    <span id="current">0:00</span>
-    <span id="duration">0:00</span>
+    <audio id="audio"></audio>
+
+    <div class="progress-container">
+
+      <input
+        id="progress"
+        type="range"
+        value="0"
+        min="0"
+        max="100"
+      >
+
+      <div class="time">
+        <span id="current">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
+
+    </div>
+
+    <div class="controls">
+
+      <button
+        onclick="previousSong()"
+        aria-label="Previous Song">
+        ⏮
+      </button>
+
+      <button
+        class="play-button"
+        id="playBtn"
+        onclick="togglePlay()"
+        aria-label="Play or Pause">
+        ▶
+      </button>
+
+      <button
+        onclick="nextSong()"
+        aria-label="Next Song">
+        ⏭
+      </button>
+
+    </div>
+
+    <div class="playlist-title">
+      PLAYLIST
+    </div>
+
+    <div id="playlist" class="playlist"></div>
+
+    <div class="footer">
+      Enjoy the music ♪
+    </div>
+
   </div>
 
-  <div class="buttons">
-    <button onclick="previousSong()">⏮</button>
-    <button class="play" id="playBtn" onclick="togglePlay()">▶</button>
-    <button onclick="nextSong()">⏭</button>
-  </div>
 
-  <div class="playlist" id="playlist"></div>
+  <script>
 
-</div>
+    const songs = [
 
-<script>
+      {
+        title: "Song 1",
+        artist: "Artist",
+        url: "SONG_1_URL"
+      },
 
-const songs = [
-  {
-    title: "آهنگ ۱",
-    artist: "هنرمند",
-    url: "SONG_1_URL"
-  },
-  {
-    title: "آهنگ ۲",
-    artist: "هنرمند",
-    url: "SONG_2_URL"
-  },
-  {
-    title: "آهنگ ۳",
-    artist: "هنرمند",
-    url: "SONG_3_URL"
-  }
-];
+      {
+        title: "Song 2",
+        artist: "Artist",
+        url: "SONG_2_URL"
+      },
 
-const audio = document.getElementById("audio");
-const title = document.getElementById("title");
-const artist = document.getElementById("artist");
-const progress = document.getElementById("progress");
-const current = document.getElementById("current");
-const duration = document.getElementById("duration");
-const playBtn = document.getElementById("playBtn");
-const playlist = document.getElementById("playlist");
+      {
+        title: "Song 3",
+        artist: "Artist",
+        url: "SONG_3_URL"
+      }
 
-let currentSong = 0;
+    ];
 
-function loadSong(index) {
-  currentSong = index;
 
-  const song = songs[index];
+    const audio =
+      document.getElementById("audio");
 
-  title.textContent = song.title;
-  artist.textContent = song.artist;
-  audio.src = song.url;
+    const title =
+      document.getElementById("title");
 
-  playlist.innerHTML = "";
+    const artist =
+      document.getElementById("artist");
 
-  songs.forEach((item, i) => {
-    const div = document.createElement("div");
+    const progress =
+      document.getElementById("progress");
 
-    div.className = "song" + (i === currentSong ? " active" : "");
+    const current =
+      document.getElementById("current");
 
-    div.textContent = item.title;
+    const duration =
+      document.getElementById("duration");
 
-    div.onclick = () => {
-      loadSong(i);
+    const playBtn =
+      document.getElementById("playBtn");
+
+    const playlist =
+      document.getElementById("playlist");
+
+
+    let currentSong = 0;
+
+
+    function loadSong(index) {
+
+      currentSong = index;
+
+      const song = songs[index];
+
+      title.textContent = song.title;
+
+      artist.textContent = song.artist;
+
+      audio.src = song.url;
+
+      progress.value = 0;
+
+      current.textContent = "0:00";
+
+      duration.textContent = "0:00";
+
+      renderPlaylist();
+    }
+
+
+    function renderPlaylist() {
+
+      playlist.innerHTML = "";
+
+      songs.forEach((song, index) => {
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "song" +
+          (index === currentSong
+            ? " active"
+            : "");
+
+
+        item.innerHTML = `
+
+          <div class="song-number">
+            ${index + 1}
+          </div>
+
+          <div class="song-info">
+
+            <div class="song-name">
+              ${song.title}
+            </div>
+
+            <div class="song-artist">
+              ${song.artist}
+            </div>
+
+          </div>
+
+        `;
+
+
+        item.onclick = () => {
+
+          loadSong(index);
+
+          audio.play();
+
+          playBtn.textContent = "⏸";
+
+        };
+
+
+        playlist.appendChild(item);
+
+      });
+
+    }
+
+
+    function togglePlay() {
+
+      if (audio.paused) {
+
+        audio.play();
+
+        playBtn.textContent = "⏸";
+
+      } else {
+
+        audio.pause();
+
+        playBtn.textContent = "▶";
+
+      }
+
+    }
+
+
+    function previousSong() {
+
+      currentSong--;
+
+      if (currentSong < 0) {
+
+        currentSong =
+          songs.length - 1;
+
+      }
+
+      loadSong(currentSong);
+
       audio.play();
+
       playBtn.textContent = "⏸";
-    };
+    }
 
-    playlist.appendChild(div);
-  });
-}
 
-function togglePlay() {
-  if (audio.paused) {
-    audio.play();
-    playBtn.textContent = "⏸";
-  } else {
-    audio.pause();
-    playBtn.textContent = "▶";
-  }
-}
+    function nextSong() {
 
-function previousSong() {
-  currentSong--;
+      currentSong++;
 
-  if (currentSong < 0) {
-    currentSong = songs.length - 1;
-  }
+      if (currentSong >= songs.length) {
 
-  loadSong(currentSong);
-  audio.play();
-  playBtn.textContent = "⏸";
-}
+        currentSong = 0;
 
-function nextSong() {
-  currentSong++;
+      }
 
-  if (currentSong >= songs.length) {
-    currentSong = 0;
-  }
+      loadSong(currentSong);
 
-  loadSong(currentSong);
-  audio.play();
-  playBtn.textContent = "⏸";
-}
+      audio.play();
 
-audio.addEventListener("timeupdate", () => {
-  if (audio.duration) {
-    progress.value = (audio.currentTime / audio.duration) * 100;
-  }
+      playBtn.textContent = "⏸";
+    }
 
-  current.textContent = formatTime(audio.currentTime);
-});
 
-audio.addEventListener("loadedmetadata", () => {
-  duration.textContent = formatTime(audio.duration);
-});
+    audio.addEventListener(
+      "timeupdate",
+      () => {
 
-progress.addEventListener("input", () => {
-  if (audio.duration) {
-    audio.currentTime =
-      (progress.value / 100) * audio.duration;
-  }
-});
+        if (audio.duration) {
 
-audio.addEventListener("ended", () => {
-  nextSong();
-});
+          progress.value =
+            (audio.currentTime /
+            audio.duration) * 100;
 
-function formatTime(seconds) {
-  if (!seconds || isNaN(seconds)) {
-    return "0:00";
-  }
+        }
 
-  const min = Math.floor(seconds / 60);
-  const sec = Math.floor(seconds % 60);
+        current.textContent =
+          formatTime(audio.currentTime);
 
-  return min + ":" + (sec < 10 ? "0" : "") + sec;
-}
+      }
+    );
 
-loadSong(0);
 
-</script>
+    audio.addEventListener(
+      "loadedmetadata",
+      () => {
+
+        duration.textContent =
+          formatTime(audio.duration);
+
+      }
+    );
+
+
+    progress.addEventListener(
+      "input",
+      () => {
+
+        if (audio.duration) {
+
+          audio.currentTime =
+            (progress.value / 100) *
+            audio.duration;
+
+        }
+
+      }
+    );
+
+
+    audio.addEventListener(
+      "ended",
+      () => {
+
+        nextSong();
+
+      }
+    );
+
+
+    function formatTime(seconds) {
+
+      if (!seconds || isNaN(seconds)) {
+
+        return "0:00";
+
+      }
+
+      const minutes =
+        Math.floor(seconds / 60);
+
+      const secondsLeft =
+        Math.floor(seconds % 60);
+
+      return (
+        minutes +
+        ":" +
+        (secondsLeft < 10 ? "0" : "") +
+        secondsLeft
+      );
+
+    }
+
+
+    loadSong(0);
+
+  </script>
 
 </body>
-  </html>
+</html>
