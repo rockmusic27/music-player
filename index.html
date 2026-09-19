@@ -3,355 +3,456 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rock Player</title>
+<title>Dark Rock Player</title>
 
 <style>
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 20% 20%, #252525 0%, transparent 30%),
-    radial-gradient(circle at 80% 80%, #1c1c1c 0%, transparent 30%),
-    linear-gradient(135deg, #050505, #111, #050505);
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 20%, #252525 0%, #0b0b0b 38%, #000 75%);
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 
+/* Background */
 body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 8%;
-  width: 1px;
-  height: 100%;
-  background: rgba(255,255,255,0.15);
-  box-shadow:
-    120px 0 rgba(255,255,255,0.10),
-    240px 0 rgba(255,255,255,0.08),
-    360px 0 rgba(255,255,255,0.06),
-    480px 0 rgba(255,255,255,0.05),
-    600px 0 rgba(255,255,255,0.04),
-    720px 0 rgba(255,255,255,0.03);
-  pointer-events: none;
+    content: "NIRVANA     DEFTONES     THREE DAYS GRACE";
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.025);
+    font-size: clamp(35px, 7vw, 100px);
+    font-weight: 900;
+    transform: rotate(-12deg);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: -2;
 }
 
-.bg-text {
-  position: fixed;
-  font-weight: 900;
-  color: rgba(255,255,255,0.035);
-  font-size: 80px;
-  letter-spacing: 8px;
-  transform: rotate(-12deg);
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
+/* Guitar-string effect */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 70px,
+            rgba(255,255,255,0.025) 71px,
+            transparent 72px
+        );
+    pointer-events: none;
+    z-index: -1;
 }
 
-.bg1 {
-  top: 8%;
-  left: -10px;
+.player {
+    width: min(440px, 94%);
+    margin: 35px auto;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 28px;
+    background: rgba(12,12,12,0.88);
+    backdrop-filter: blur(16px);
+    box-shadow:
+        0 25px 80px rgba(0,0,0,0.75),
+        inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
-.bg2 {
-  bottom: 18%;
-  right: -30px;
-  transform: rotate(12deg);
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 22px;
 }
 
-.bg3 {
-  top: 48%;
-  left: -30px;
-  font-size: 55px;
-  transform: rotate(-8deg);
+.header h1 {
+    font-size: 15px;
+    letter-spacing: 5px;
+    color: #aaa;
+    text-transform: uppercase;
 }
 
-.container {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 520px;
-  margin: auto;
-  padding: 25px 18px 40px;
+.header p {
+    margin-top: 7px;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
 }
 
-.tags {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+/* Cover */
+.cover-wrap {
+    position: relative;
+    width: 270px;
+    height: 270px;
+    margin: 0 auto 25px;
 }
 
-.tag {
-  border: 1px solid #555;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: #ddd;
-  background: rgba(0,0,0,0.5);
+.cover-glow {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: #777;
+    filter: blur(35px);
+    opacity: 0.25;
+    transition: 0.6s;
 }
 
-h1 {
-  text-align: center;
-  margin: 10px 0 25px;
-  font-size: 32px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+.cover-wrap.playing .cover-glow {
+    opacity: 0.55;
+    transform: scale(1.08);
 }
 
 .cover {
-  width: 240px;
-  height: 240px;
-  margin: auto;
-  border-radius: 50%;
-  border: 3px solid #555;
-  box-shadow:
-    0 0 0 8px rgba(255,255,255,0.03),
-    0 15px 50px rgba(0,0,0,0.8);
-  position: relative;
-  overflow: hidden;
-  background: #111;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow:
+        0 0 0 7px rgba(255,255,255,0.025),
+        0 20px 50px rgba(0,0,0,0.8);
+    animation: spin 16s linear infinite;
+    animation-play-state: paused;
+}
+
+.cover-wrap.playing .cover {
+    animation-play-state: running;
 }
 
 .cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle,
-      transparent 0 8%,
-      rgba(0,0,0,0.20) 8.5% 9%,
-      transparent 9.5% 20%,
-      rgba(0,0,0,0.15) 20.5% 21%,
-      transparent 21.5% 34%,
-      rgba(0,0,0,0.12) 34.5% 35%,
-      transparent 35.5% 48%
-    );
-  pointer-events: none;
-  z-index: 2;
-}
-
+/* Center circle */
 .cover::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: #111;
-  border: 3px solid #777;
-  border-radius: 50%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3;
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #080808;
+    border: 4px solid #222;
+    box-shadow: 0 0 0 2px #555;
 }
 
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Song info */
 .song-info {
-  text-align: center;
-  margin-top: 22px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-#title {
-  font-size: 23px;
-  font-weight: bold;
-  margin-bottom: 7px;
+.song-info h2 {
+    font-size: 25px;
+    margin-bottom: 7px;
 }
 
-#artist {
-  color: #999;
-  font-size: 14px;
+.song-info p {
+    color: #888;
+    font-size: 14px;
 }
 
-audio {
-  display: none;
+/* Visualizer */
+.visualizer {
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 4px;
+    margin: 12px 0 18px;
 }
 
+.bar {
+    width: 4px;
+    height: 8px;
+    background: #aaa;
+    border-radius: 5px;
+    animation: visual 0.7s ease-in-out infinite alternate;
+    animation-play-state: paused;
+}
+
+.bar:nth-child(2) { animation-delay: .1s; }
+.bar:nth-child(3) { animation-delay: .2s; }
+.bar:nth-child(4) { animation-delay: .3s; }
+.bar:nth-child(5) { animation-delay: .4s; }
+.bar:nth-child(6) { animation-delay: .2s; }
+.bar:nth-child(7) { animation-delay: .1s; }
+.bar:nth-child(8) { animation-delay: .3s; }
+
+.player.playing .bar {
+    animation-play-state: running;
+}
+
+@keyframes visual {
+    from { height: 7px; }
+    to { height: 38px; }
+}
+
+/* Progress */
 .progress-area {
-  margin-top: 25px;
-}
-
-.progress {
-  width: 100%;
-  height: 5px;
-  appearance: none;
-  background: #333;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.progress::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: white;
+    margin-top: 5px;
 }
 
 .time {
-  display: flex;
-  justify-content: space-between;
-  color: #888;
-  font-size: 11px;
-  margin-top: 7px;
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 11px;
+    margin-bottom: 7px;
 }
 
+input[type="range"] {
+    width: 100%;
+    accent-color: #aaa;
+    cursor: pointer;
+}
+
+/* Controls */
 .controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 18px;
-  margin: 25px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    margin: 22px 0;
 }
 
-.controls button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid #555;
-  background: #090909;
-  color: white;
-  cursor: pointer;
-  font-size: 17px;
-  transition: 0.2s;
+.control {
+    width: 45px;
+    height: 45px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    background: #171717;
+    color: #fff;
+    cursor: pointer;
+    font-size: 17px;
+    transition: .2s;
 }
 
-.controls button:hover {
-  background: #222;
-  border-color: white;
+.control:hover {
+    transform: scale(1.08);
+    background: #252525;
 }
 
-.controls .play {
-  width: 62px;
-  height: 62px;
-  font-size: 22px;
-  background: white;
-  color: black;
-  border: none;
+.play {
+    width: 64px;
+    height: 64px;
+    font-size: 23px;
+    background: #eee;
+    color: #000;
+    border: none;
+    box-shadow: 0 0 25px rgba(255,255,255,0.12);
 }
 
-.controls .play:hover {
-  background: #ddd;
+.play:hover {
+    background: #fff;
+}
+
+/* Volume */
+.volume {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.volume input {
+    flex: 1;
+}
+
+/* Playlist */
+.playlist-title {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
 }
 
 .playlist {
-  margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 }
 
-.playlist-title {
-  font-size: 12px;
-  color: #777;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
+.track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: .25s;
+    border: 1px solid transparent;
 }
 
-.song {
-  padding: 14px;
-  border: 1px solid #222;
-  background: rgba(10,10,10,0.8);
-  margin-bottom: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
+.track:hover {
+    background: rgba(255,255,255,0.05);
 }
 
-.song:hover,
-.song.active {
-  border-color: #666;
-  background: #181818;
+.track.active {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.1);
 }
 
-.song-name {
-  font-size: 14px;
-  font-weight: bold;
+.track img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 9px;
 }
 
-.song-artist {
-  font-size: 11px;
-  color: #777;
-  margin-top: 4px;
+.track-info {
+    flex: 1;
+    min-width: 0;
 }
 
-footer {
-  text-align: center;
-  color: #444;
-  font-size: 10px;
-  margin-top: 30px;
-  letter-spacing: 2px;
+.track-info strong {
+    display: block;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-info span {
+    display: block;
+    color: #666;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.track-number {
+    color: #555;
+    font-size: 11px;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    color: #444;
+    font-size: 10px;
+    margin-top: 25px;
+    letter-spacing: 2px;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .player {
+        margin: 15px auto;
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .cover-wrap {
+        width: 235px;
+        height: 235px;
+    }
+
+    .song-info h2 {
+        font-size: 21px;
+    }
+
+    .controls {
+        gap: 14px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg-text bg1">NIRVANA</div>
-<div class="bg-text bg2">DEFTONES</div>
-<div class="bg-text bg3">THREE DAYS GRACE</div>
+<div class="player" id="player">
 
-<div class="container">
-
-  <div class="tags">
-    <div class="tag">NIRVANA</div>
-    <div class="tag">DEFTONES</div>
-    <div class="tag">THREE DAYS GRACE</div>
-  </div>
-
-  <h1>Rock Player</h1>
-
-  <div class="cover">
-    <img id="coverImage" src="f85c6b753d8aaba1aaee705201dac270.jpg" alt="Album Cover">
-  </div>
-
-  <div class="song-info">
-    <div id="title">Heart-Shaped Box</div>
-    <div id="artist">Nirvana</div>
-  </div>
-
-  <div class="progress-area">
-    <input
-      type="range"
-      id="progress"
-      class="progress"
-      value="0"
-      min="0"
-      max="100"
-    >
-
-    <div class="time">
-      <span id="currentTime">0:00</span>
-      <span id="duration">0:00</span>
+    <div class="header">
+        <h1>Dark Rock Player</h1>
+        <p>TURN IT UP</p>
     </div>
-  </div>
 
-  <audio id="audio"></audio>
+    <div class="cover-wrap" id="coverWrap">
+        <div class="cover-glow"></div>
 
-  <div class="controls">
-    <button onclick="prevSong()">⏮</button>
-    <button class="play" onclick="togglePlay()" id="playBtn">▶</button>
-    <button onclick="nextSong()">⏭</button>
-  </div>
+        <div class="cover">
+            <img id="coverImage"
+                 src="f85c6b753d8aaba1aaee705201dac270.jpg"
+                 alt="Album Cover">
+        </div>
+    </div>
 
-  <div class="playlist">
+    <div class="song-info">
+        <h2 id="title">Heart-Shaped Box</h2>
+        <p id="artist">Nirvana</p>
+    </div>
+
+    <div class="visualizer">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+
+    <audio id="audio"></audio>
+
+    <div class="progress-area">
+        <div class="time">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+        </div>
+
+        <input type="range"
+               id="progress"
+               min="0"
+               max="100"
+               value="0">
+    </div>
+
+    <div class="controls">
+        <button class="control" id="prev">⏮</button>
+        <button class="control play" id="play">▶</button>
+        <button class="control" id="next">⏭</button>
+    </div>
+
+    <div class="volume">
+        <span>🔊</span>
+        <input type="range"
+               id="volume"
+               min="0"
+               max="1"
+               step="0.01"
+               value="0.8">
+    </div>
+
     <div class="playlist-title">Playlist</div>
-    <div id="playlist"></div>
-  </div>
 
-  <footer>
-    ROCK PLAYER
-  </footer>
+    <div class="playlist" id="playlist"></div>
+
+    <div class="footer">
+        MADE FOR LOUD MUSIC
+    </div>
 
 </div>
 
@@ -359,190 +460,222 @@ footer {
 
 const songs = [
 
-  {
-    title: "Heart-Shaped Box",
-    artist: "Nirvana",
-    url: "8_144453842814116031.mp3",
-    cover: "f85c6b753d8aaba1aaee705201dac270.jpg"
-  },
+    {
+        title: "Heart-Shaped Box",
+        artist: "Nirvana",
+        url: "8_144453842814116031.mp3",
+        cover: "f85c6b753d8aaba1aaee705201dac270.jpg"
+    },
 
-  {
-    title: "Pink Maggit",
-    artist: "Deftones",
-    url: "8_144492326763558406.mp3",
-    cover: "9783d4b54a4a2651eeb5125621dd15a5.jpg"
-  },
+    {
+        title: "Pink Maggit",
+        artist: "Deftones",
+        url: "8_144492326763558406.mp3",
+        cover: "9783d4b54a4a2651eeb5125621dd15a5.jpg"
+    },
 
-  {
-    title: "Kill Me Fast",
-    artist: "Three Days Grace",
-    url: "Kill%20Me%20Fast.mp3",
-    cover: "cropped-cover.avif"
-  }
+    {
+        title: "Kill Me Fast",
+        artist: "Three Days Grace",
+        url: "Kill%20Me%20Fast.mp3",
+        cover: "cropped-cover.avif"
+    }
 
 ];
 
-let currentSong = 0;
-
 const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
 const coverImage = document.getElementById("coverImage");
-const playBtn = document.getElementById("playBtn");
+const coverWrap = document.getElementById("coverWrap");
+
 const progress = document.getElementById("progress");
 const currentTime = document.getElementById("currentTime");
 const duration = document.getElementById("duration");
+
+const volume = document.getElementById("volume");
 const playlist = document.getElementById("playlist");
+const player = document.getElementById("player");
+
+let currentIndex = 0;
+
+audio.volume = 0.8;
+
+function formatTime(seconds) {
+    if (!Number.isFinite(seconds)) return "0:00";
+
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+
+    return minutes + ":" + String(secs).padStart(2, "0");
+}
 
 function loadSong(index) {
 
-  currentSong = index;
+    currentIndex = index;
 
-  const song = songs[index];
+    const song = songs[index];
 
-  title.textContent = song.title;
-  artist.textContent = song.artist;
+    title.textContent = song.title;
+    artist.textContent = song.artist;
 
-  audio.src = song.url;
+    audio.src = song.url;
 
-  coverImage.src = song.cover;
-  coverImage.alt = song.title + " - " + song.artist;
+    coverImage.src = song.cover;
+    coverImage.alt = song.title + " - " + song.artist;
 
-  progress.value = 0;
-  currentTime.textContent = "0:00";
-  duration.textContent = "0:00";
+    progress.value = 0;
 
-  updatePlaylist();
+    updatePlaylist();
+
+    document.title = song.title + " — " + song.artist;
 }
 
-function togglePlay() {
-
-  if (audio.paused) {
+function playSong() {
 
     audio.play();
-    playBtn.textContent = "❚❚";
 
-  } else {
+    playBtn.textContent = "⏸";
+
+    player.classList.add("playing");
+    coverWrap.classList.add("playing");
+}
+
+function pauseSong() {
 
     audio.pause();
+
     playBtn.textContent = "▶";
 
-  }
-
+    player.classList.remove("playing");
+    coverWrap.classList.remove("playing");
 }
 
-function nextSong() {
+playBtn.addEventListener("click", () => {
 
-  currentSong++;
+    if (audio.paused) {
+        playSong();
+    } else {
+        pauseSong();
+    }
 
-  if (currentSong >= songs.length) {
-    currentSong = 0;
-  }
+});
 
-  loadSong(currentSong);
+prevBtn.addEventListener("click", () => {
 
-  audio.play();
+    currentIndex--;
 
-  playBtn.textContent = "❚❚";
-}
+    if (currentIndex < 0) {
+        currentIndex = songs.length - 1;
+    }
 
-function prevSong() {
+    loadSong(currentIndex);
+    playSong();
 
-  currentSong--;
+});
 
-  if (currentSong < 0) {
-    currentSong = songs.length - 1;
-  }
+nextBtn.addEventListener("click", () => {
 
-  loadSong(currentSong);
+    currentIndex++;
 
-  audio.play();
+    if (currentIndex >= songs.length) {
+        currentIndex = 0;
+    }
 
-  playBtn.textContent = "❚❚";
-}
+    loadSong(currentIndex);
+    playSong();
+
+});
+
+audio.addEventListener("timeupdate", () => {
+
+    if (audio.duration) {
+
+        progress.value =
+            (audio.currentTime / audio.duration) * 100;
+
+    }
+
+    currentTime.textContent =
+        formatTime(audio.currentTime);
+
+});
+
+audio.addEventListener("loadedmetadata", () => {
+
+    duration.textContent =
+        formatTime(audio.duration);
+
+});
+
+progress.addEventListener("input", () => {
+
+    if (audio.duration) {
+
+        audio.currentTime =
+            (progress.value / 100) * audio.duration;
+
+    }
+
+});
+
+volume.addEventListener("input", () => {
+
+    audio.volume = volume.value;
+
+});
+
+audio.addEventListener("ended", () => {
+
+    currentIndex++;
+
+    if (currentIndex >= songs.length) {
+        currentIndex = 0;
+    }
+
+    loadSong(currentIndex);
+    playSong();
+
+});
 
 function updatePlaylist() {
 
-  playlist.innerHTML = "";
+    playlist.innerHTML = "";
 
-  songs.forEach((song, index) => {
+    songs.forEach((song, index) => {
 
-    const div = document.createElement("div");
+        const track = document.createElement("div");
 
-    div.className = "song";
+        track.className =
+            "track" +
+            (index === currentIndex ? " active" : "");
 
-    if (index === currentSong) {
-      div.classList.add("active");
-    }
+        track.innerHTML = `
+            <img src="${song.cover}" alt="">
+            <div class="track-info">
+                <strong>${song.title}</strong>
+                <span>${song.artist}</span>
+            </div>
+            <div class="track-number">
+                ${String(index + 1).padStart(2, "0")}
+            </div>
+        `;
 
-    div.innerHTML = `
-      <div class="song-name">${song.title}</div>
-      <div class="song-artist">${song.artist}</div>
-    `;
+        track.addEventListener("click", () => {
 
-    div.onclick = function() {
+            loadSong(index);
+            playSong();
 
-      loadSong(index);
+        });
 
-      audio.play();
+        playlist.appendChild(track);
 
-      playBtn.textContent = "❚❚";
+    });
 
-    };
-
-    playlist.appendChild(div);
-
-  });
-
-}
-
-audio.addEventListener("loadedmetadata", function() {
-
-  duration.textContent =
-    formatTime(audio.duration);
-
-});
-
-audio.addEventListener("timeupdate", function() {
-
-  if (!audio.duration) return;
-
-  progress.value =
-    (audio.currentTime / audio.duration) * 100;
-
-  currentTime.textContent =
-    formatTime(audio.currentTime);
-
-});
-
-progress.addEventListener("input", function() {
-
-  if (!audio.duration) return;
-
-  audio.currentTime =
-    (progress.value / 100) * audio.duration;
-
-});
-
-audio.addEventListener("ended", function() {
-
-  nextSong();
-
-});
-
-function formatTime(seconds) {
-
-  if (isNaN(seconds)) {
-    return "0:00";
-  }
-
-  const minutes = Math.floor(seconds / 60);
-
-  const secs = Math.floor(seconds % 60);
-
-  return minutes + ":" +
-    (secs < 10 ? "0" : "") +
-    secs;
 }
 
 loadSong(0);
