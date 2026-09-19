@@ -17,7 +17,6 @@
     --dark: #101010;
     --panel: #171717;
     --gray: #8b8b8b;
-    --light: #d8d8d8;
     --white: #f5f5f5;
     --border: rgba(255,255,255,0.09);
 }
@@ -38,8 +37,6 @@ body {
         );
 }
 
-/* subtle background */
-
 body::before {
     content: "";
     position: fixed;
@@ -57,12 +54,6 @@ body::before {
         );
 
     background-size: 70px 70px;
-
-    mask-image: linear-gradient(
-        to bottom,
-        rgba(0,0,0,0.5),
-        transparent 75%
-    );
 
     pointer-events: none;
 }
@@ -91,11 +82,8 @@ body::before {
 
     box-shadow:
         0 35px 100px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(255,255,255,0.02),
         inset 0 1px 0 rgba(255,255,255,0.07);
 }
-
-/* TOP LINE */
 
 .player::before {
     content: "";
@@ -120,7 +108,6 @@ body::before {
 
 .music-header {
     text-align: center;
-
     margin-bottom: 24px;
 
     color: #f1f1f1;
@@ -129,7 +116,6 @@ body::before {
     font-weight: 800;
 
     letter-spacing: 6px;
-
     text-transform: uppercase;
 
     text-shadow:
@@ -151,7 +137,6 @@ body::before {
     margin: 5px auto 24px;
 
     border-radius: 50%;
-
     padding: 7px;
 
     background:
@@ -188,12 +173,27 @@ body::before {
     display: block;
 
     object-fit: cover;
-
     border-radius: 50%;
+
+    /* انیمیشن اینجا نیست */
 }
 
-.player.playing .cover {
+/*
+   به جای animation ساده،
+   چرخش با transform کنترل می‌شود
+   تا هنگام Pause از همان نقطه بایستد.
+*/
+
+.cover img {
+    transform: rotate(0deg);
+}
+
+.cover.spinning img {
     animation: spin 12s linear infinite;
+}
+
+.cover.paused img {
+    animation-play-state: paused;
 }
 
 @keyframes spin {
@@ -218,8 +218,6 @@ body::before {
 
     font-size: 25px;
     font-weight: 700;
-
-    letter-spacing: 0.3px;
 
     margin-bottom: 7px;
 }
@@ -332,10 +330,7 @@ body::before {
         0 8px 18px rgba(0,0,0,0.5),
         inset 0 1px 0 rgba(255,255,255,0.06);
 
-    transition:
-        transform 0.2s,
-        background 0.2s,
-        color 0.2s;
+    transition: 0.2s;
 }
 
 .controls button:hover {
@@ -351,9 +346,7 @@ body::before {
     color: white;
 }
 
-.controls button:active {
-    transform: scale(0.94);
-}
+/* PLAY + PAUSE SAME STYLE */
 
 .controls .play {
     width: 66px;
@@ -364,28 +357,28 @@ body::before {
     background:
         linear-gradient(
             145deg,
-            #f4f4f4,
-            #a7a7a7
+            #151515,
+            #050505
         );
 
-    color: #111;
+    color: #f1f1f1;
 
     font-size: 24px;
 
     box-shadow:
         0 10px 30px rgba(0,0,0,0.7),
-        0 0 25px rgba(255,255,255,0.08);
+        0 0 20px rgba(255,255,255,0.05);
 }
 
 .controls .play:hover {
     background:
         linear-gradient(
             145deg,
-            #ffffff,
-            #c4c4c4
+            #292929,
+            #0b0b0b
         );
 
-    color: #000;
+    color: white;
 }
 
 /* VISUALIZER */
@@ -442,7 +435,6 @@ body::before {
 
 .playlist {
     margin-top: 6px;
-
     padding-top: 18px;
 
     border-top: 1px solid rgba(255,255,255,0.07);
@@ -455,7 +447,6 @@ body::before {
     font-weight: 700;
 
     letter-spacing: 3px;
-
     text-transform: uppercase;
 
     margin-bottom: 12px;
@@ -468,7 +459,6 @@ body::before {
     gap: 12px;
 
     padding: 10px;
-
     margin-bottom: 7px;
 
     border: 1px solid transparent;
@@ -483,10 +473,7 @@ body::before {
 
     cursor: pointer;
 
-    transition:
-        transform 0.2s,
-        background 0.2s,
-        border 0.2s;
+    transition: 0.2s;
 }
 
 .track:hover {
@@ -523,7 +510,6 @@ body::before {
     flex-shrink: 0;
 
     object-fit: cover;
-
     border-radius: 10px;
 
     box-shadow:
@@ -570,21 +556,10 @@ body::before {
 
 @media (max-width: 650px) {
 
-    body {
-        background:
-            radial-gradient(
-                circle at 50% 0%,
-                #414141,
-                #111 48%,
-                #070707 100%
-            );
-    }
-
     .player {
         width: 94%;
         margin: 18px auto;
         padding: 20px;
-
         border-radius: 25px;
     }
 
@@ -617,7 +592,7 @@ body::before {
         <span>MY</span> MUSIC
     </div>
 
-    <div class="cover">
+    <div class="cover" id="cover">
         <img id="coverImage" src="" alt="Cover">
     </div>
 
@@ -716,6 +691,7 @@ const nextBtn = document.getElementById("nextBtn");
 const songTitle = document.getElementById("songTitle");
 const songArtist = document.getElementById("songArtist");
 
+const cover = document.getElementById("cover");
 const coverImage = document.getElementById("coverImage");
 
 const progress = document.getElementById("progress");
@@ -768,6 +744,10 @@ function loadSong(index) {
     currentTime.textContent = "0:00";
     duration.textContent = "0:00";
 
+    /* آهنگ جدید → چرخش از اول */
+    cover.classList.remove("spinning");
+    cover.classList.remove("paused");
+
     updatePlaylist();
 
     document.title =
@@ -784,6 +764,9 @@ function playSong() {
     playBtn.textContent = "⏸";
 
     player.classList.add("playing");
+
+    cover.classList.add("spinning");
+    cover.classList.remove("paused");
 }
 
 
@@ -796,17 +779,28 @@ function pauseSong() {
     playBtn.textContent = "▶";
 
     player.classList.remove("playing");
+
+    /*
+       اینجا animation فقط Pause می‌شود
+       و موقعیت کاور حفظ می‌شود.
+    */
+
+    cover.classList.add("paused");
 }
 
 
-/* PLAY BUTTON */
+/* PLAY / PAUSE */
 
 playBtn.addEventListener("click", () => {
 
     if (audio.paused) {
+
         playSong();
+
     } else {
+
         pauseSong();
+
     }
 
 });
@@ -823,6 +817,7 @@ prevBtn.addEventListener("click", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -839,6 +834,7 @@ nextBtn.addEventListener("click", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -896,6 +892,7 @@ audio.addEventListener("ended", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -931,6 +928,7 @@ function updatePlaylist() {
         track.addEventListener("click", () => {
 
             loadSong(index);
+
             playSong();
 
         });
