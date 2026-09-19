@@ -15,14 +15,33 @@
 body {
     min-height: 100vh;
     background:
-        radial-gradient(circle at 50% 20%, #252525 0%, #0b0b0b 38%, #000 75%);
+        radial-gradient(circle at 20% 10%, #454545 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, #242424 0%, transparent 35%),
+        linear-gradient(135deg, #303030 0%, #111 45%, #050505 100%);
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     overflow-x: hidden;
 }
 
-/* Background */
+/* Background texture */
 body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 80px,
+            rgba(255,255,255,0.018) 81px,
+            transparent 82px
+        );
+    pointer-events: none;
+    z-index: -3;
+}
+
+/* Big faded band names */
+body::after {
     content: "NIRVANA     DEFTONES     THREE DAYS GRACE";
     position: fixed;
     inset: 0;
@@ -38,24 +57,29 @@ body::before {
     z-index: -2;
 }
 
-/* Guitar-string effect */
-body::after {
-    content: "";
+/* Small electric guitar */
+.guitar-decoration {
     position: fixed;
-    inset: 0;
-    background:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 70px,
-            rgba(255,255,255,0.025) 71px,
-            transparent 72px
-        );
+    top: 20px;
+    left: 18px;
+    width: 150px;
+    height: 150px;
+    opacity: 0.18;
+    transform: rotate(-18deg);
     pointer-events: none;
     z-index: -1;
+    filter: drop-shadow(0 5px 12px rgba(0,0,0,0.7));
 }
 
+.guitar-decoration svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Main player */
 .player {
+    position: relative;
+    z-index: 1;
     width: min(440px, 94%);
     margin: 35px auto;
     padding: 24px;
@@ -135,7 +159,6 @@ body::after {
     object-fit: cover;
 }
 
-/* Center circle */
 .cover::after {
     content: "";
     position: absolute;
@@ -358,6 +381,7 @@ input[type="range"] {
 
 /* Mobile */
 @media (max-width: 480px) {
+
     .player {
         margin: 15px auto;
         padding: 18px;
@@ -376,11 +400,103 @@ input[type="range"] {
     .controls {
         gap: 14px;
     }
+
+    .guitar-decoration {
+        width: 105px;
+        height: 105px;
+        top: 8px;
+        left: 5px;
+        opacity: 0.13;
+    }
 }
 </style>
 </head>
 
 <body>
+
+<!-- Electric guitar decoration -->
+<div class="guitar-decoration">
+
+<svg viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg"
+     aria-hidden="true">
+
+    <!-- Neck -->
+    <rect x="95"
+          y="8"
+          width="18"
+          height="105"
+          rx="4"
+          fill="#1b1b1b"
+          stroke="#777"
+          stroke-width="2"/>
+
+    <!-- Headstock -->
+    <path d="M92 10 L100 2 L116 4 L121 13 L113 24 L94 21 Z"
+          fill="#111"
+          stroke="#777"
+          stroke-width="2"/>
+
+    <!-- Tuning pegs -->
+    <circle cx="96" cy="7" r="3" fill="#aaa"/>
+    <circle cx="116" cy="9" r="3" fill="#aaa"/>
+    <circle cx="96" cy="15" r="3" fill="#777"/>
+    <circle cx="116" cy="17" r="3" fill="#777"/>
+
+    <!-- Body -->
+    <path d="
+        M91 93
+        C72 78 49 84 48 103
+        C47 116 57 122 68 124
+        C53 132 55 151 70 157
+        C85 163 96 151 101 139
+        C106 151 117 163 132 157
+        C147 151 149 132 134 124
+        C145 122 155 116 154 103
+        C153 84 130 78 111 93
+        Z"
+        fill="#171717"
+        stroke="#8a8a8a"
+        stroke-width="3"/>
+
+    <!-- Pickguard -->
+    <path d="
+        M83 105
+        C91 96 110 96 119 105
+        L113 135
+        C107 142 95 142 89 135
+        Z"
+        fill="#303030"
+        stroke="#777"
+        stroke-width="1.5"/>
+
+    <!-- Pickups -->
+    <rect x="88" y="113" width="26" height="7" rx="2"
+          fill="#aaa"/>
+    <rect x="88" y="126" width="26" height="7" rx="2"
+          fill="#666"/>
+
+    <!-- Bridge -->
+    <rect x="87" y="138" width="28" height="5" rx="2"
+          fill="#999"/>
+
+    <!-- Strings -->
+    <line x1="99" y1="5" x2="99" y2="145"
+          stroke="#aaa" stroke-width="0.7"/>
+    <line x1="103" y1="5" x2="103" y2="145"
+          stroke="#888" stroke-width="0.7"/>
+    <line x1="107" y1="5" x2="107" y2="145"
+          stroke="#aaa" stroke-width="0.7"/>
+    <line x1="111" y1="5" x2="111" y2="145"
+          stroke="#888" stroke-width="0.7"/>
+
+    <!-- Knobs -->
+    <circle cx="76" cy="143" r="4" fill="#aaa"/>
+    <circle cx="126" cy="143" r="4" fill="#aaa"/>
+
+</svg>
+
+</div>
 
 <div class="player" id="player">
 
@@ -390,6 +506,7 @@ input[type="range"] {
     </div>
 
     <div class="cover-wrap" id="coverWrap">
+
         <div class="cover-glow"></div>
 
         <div class="cover">
@@ -397,6 +514,7 @@ input[type="range"] {
                  src="f85c6b753d8aaba1aaee705201dac270.jpg"
                  alt="Album Cover">
         </div>
+
     </div>
 
     <div class="song-info">
@@ -405,6 +523,7 @@ input[type="range"] {
     </div>
 
     <div class="visualizer">
+
         <div class="bar"></div>
         <div class="bar"></div>
         <div class="bar"></div>
@@ -413,11 +532,13 @@ input[type="range"] {
         <div class="bar"></div>
         <div class="bar"></div>
         <div class="bar"></div>
+
     </div>
 
     <audio id="audio"></audio>
 
     <div class="progress-area">
+
         <div class="time">
             <span id="currentTime">0:00</span>
             <span id="duration">0:00</span>
@@ -428,25 +549,35 @@ input[type="range"] {
                min="0"
                max="100"
                value="0">
+
     </div>
 
     <div class="controls">
+
         <button class="control" id="prev">⏮</button>
+
         <button class="control play" id="play">▶</button>
+
         <button class="control" id="next">⏭</button>
+
     </div>
 
     <div class="volume">
+
         <span>🔊</span>
+
         <input type="range"
                id="volume"
                min="0"
                max="1"
                step="0.01"
                value="0.8">
+
     </div>
 
-    <div class="playlist-title">Playlist</div>
+    <div class="playlist-title">
+        Playlist
+    </div>
 
     <div class="playlist" id="playlist"></div>
 
@@ -490,6 +621,7 @@ const nextBtn = document.getElementById("next");
 
 const title = document.getElementById("title");
 const artist = document.getElementById("artist");
+
 const coverImage = document.getElementById("coverImage");
 const coverWrap = document.getElementById("coverWrap");
 
@@ -506,9 +638,13 @@ let currentIndex = 0;
 audio.volume = 0.8;
 
 function formatTime(seconds) {
-    if (!Number.isFinite(seconds)) return "0:00";
+
+    if (!Number.isFinite(seconds)) {
+        return "0:00";
+    }
 
     const minutes = Math.floor(seconds / 60);
+
     const secs = Math.floor(seconds % 60);
 
     return minutes + ":" + String(secs).padStart(2, "0");
@@ -521,18 +657,22 @@ function loadSong(index) {
     const song = songs[index];
 
     title.textContent = song.title;
+
     artist.textContent = song.artist;
 
     audio.src = song.url;
 
     coverImage.src = song.cover;
-    coverImage.alt = song.title + " - " + song.artist;
+
+    coverImage.alt =
+        song.title + " - " + song.artist;
 
     progress.value = 0;
 
     updatePlaylist();
 
-    document.title = song.title + " — " + song.artist;
+    document.title =
+        song.title + " — " + song.artist;
 }
 
 function playSong() {
@@ -542,6 +682,7 @@ function playSong() {
     playBtn.textContent = "⏸";
 
     player.classList.add("playing");
+
     coverWrap.classList.add("playing");
 }
 
@@ -552,15 +693,20 @@ function pauseSong() {
     playBtn.textContent = "▶";
 
     player.classList.remove("playing");
+
     coverWrap.classList.remove("playing");
 }
 
 playBtn.addEventListener("click", () => {
 
     if (audio.paused) {
+
         playSong();
+
     } else {
+
         pauseSong();
+
     }
 
 });
@@ -574,6 +720,7 @@ prevBtn.addEventListener("click", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -587,6 +734,7 @@ nextBtn.addEventListener("click", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -638,6 +786,7 @@ audio.addEventListener("ended", () => {
     }
 
     loadSong(currentIndex);
+
     playSong();
 
 });
@@ -648,11 +797,14 @@ function updatePlaylist() {
 
     songs.forEach((song, index) => {
 
-        const track = document.createElement("div");
+        const track =
+            document.createElement("div");
 
         track.className =
             "track" +
-            (index === currentIndex ? " active" : "");
+            (index === currentIndex
+                ? " active"
+                : "");
 
         track.innerHTML = `
             <img src="${song.cover}" alt="">
@@ -668,6 +820,7 @@ function updatePlaylist() {
         track.addEventListener("click", () => {
 
             loadSong(index);
+
             playSong();
 
         });
