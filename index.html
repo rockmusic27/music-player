@@ -105,7 +105,6 @@ h1 {
   text-transform: uppercase;
 }
 
-/* COVER */
 .cover {
   width: 240px;
   height: 240px;
@@ -312,9 +311,8 @@ footer {
 
   <h1>Rock Player</h1>
 
-  <!-- Album Cover -->
   <div class="cover">
-    <img id="coverImage" src="covers/heart-shaped-box.jpg" alt="Album Cover">
+    <img id="coverImage" src="heart-shaped-box.jpg" alt="Album Cover">
   </div>
 
   <div class="song-info">
@@ -365,21 +363,21 @@ const songs = [
     title: "Heart-Shaped Box",
     artist: "Nirvana",
     url: "8_144453842814116031.mp3",
-    cover: "covers/heart-shaped-box.jpg"
+    cover: "heart-shaped-box.jpg"
   },
 
   {
     title: "Pink Maggit",
     artist: "Deftones",
     url: "8_144492326763558406.mp3",
-    cover: "covers/pink-maggit.jpg"
+    cover: "pink-maggit.jpg"
   },
 
   {
     title: "Kill Me Fast",
     artist: "Three Days Grace",
     url: "Kill%20Me%20Fast.mp3",
-    cover: "covers/kill-me-fast.jpg"
+    cover: "kill-me-fast.jpg"
   }
 
 ];
@@ -396,7 +394,6 @@ const currentTime = document.getElementById("currentTime");
 const duration = document.getElementById("duration");
 const playlist = document.getElementById("playlist");
 
-
 function loadSong(index) {
 
   currentSong = index;
@@ -408,7 +405,6 @@ function loadSong(index) {
 
   audio.src = song.url;
 
-  /* تغییر خودکار کاور */
   coverImage.src = song.cover;
   coverImage.alt = song.title + " - " + song.artist;
 
@@ -418,7 +414,6 @@ function loadSong(index) {
 
   updatePlaylist();
 }
-
 
 function togglePlay() {
 
@@ -436,7 +431,6 @@ function togglePlay() {
 
 }
 
-
 function nextSong() {
 
   currentSong++;
@@ -452,7 +446,6 @@ function nextSong() {
   playBtn.textContent = "❚❚";
 }
 
-
 function prevSong() {
 
   currentSong--;
@@ -467,7 +460,6 @@ function prevSong() {
 
   playBtn.textContent = "❚❚";
 }
-
 
 function updatePlaylist() {
 
@@ -504,14 +496,12 @@ function updatePlaylist() {
 
 }
 
-
 audio.addEventListener("loadedmetadata", function() {
 
   duration.textContent =
     formatTime(audio.duration);
 
 });
-
 
 audio.addEventListener("timeupdate", function() {
 
@@ -525,7 +515,6 @@ audio.addEventListener("timeupdate", function() {
 
 });
 
-
 progress.addEventListener("input", function() {
 
   if (!audio.duration) return;
@@ -535,13 +524,11 @@ progress.addEventListener("input", function() {
 
 });
 
-
 audio.addEventListener("ended", function() {
 
   nextSong();
 
 });
-
 
 function formatTime(seconds) {
 
@@ -558,8 +545,6 @@ function formatTime(seconds) {
     secs;
 }
 
-
-/* Start */
 loadSong(0);
 
 </script>
