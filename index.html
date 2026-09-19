@@ -246,27 +246,29 @@ body::before {
   color: white;
 }
 
-.controls .play,
-.controls .play:focus,
-.controls .play:active {
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 50%;
-  background: linear-gradient(145deg,#292929,#151515) !important;
-  color: #ddd !important;
-  -webkit-text-fill-color: #ddd !important;
-  font-size: 17px;
-  box-shadow:
-    0 8px 18px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.06);
+/* پلی کمی بزرگ‌تر از قبلی و بعدی، مثل حالت اصلی */
+.controls .play {
+  width: 58px;
+  height: 58px;
+  font-size: 20px;
 }
 
-.controls .play:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(145deg,#3b3b3b,#202020) !important;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
+/* آیکون‌ها همیشه سفید/خاکستری */
+.controls .play,
+.controls .play:hover,
+.controls .play:focus,
+.controls .play:active {
+  color: #ddd !important;
+  -webkit-text-fill-color: #ddd !important;
+}
+
+/* آیکون توقف اختصاصی */
+.stop-icon {
+  width: 14px;
+  height: 14px;
+  background: #ddd;
+  border-radius: 2px;
+  display: block;
 }
 
 .visualizer {
@@ -421,6 +423,11 @@ body::before {
   .controls {
     gap: 17px;
   }
+
+  .controls .play {
+    width: 54px;
+    height: 54px;
+  }
 }
 </style>
 </head>
@@ -461,7 +468,11 @@ body::before {
 
   <div class="controls">
     <button id="prevBtn">⏮</button>
-    <button id="playBtn" class="play">▶</button>
+
+    <button id="playBtn" class="play">
+      ▶
+    </button>
+
     <button id="nextBtn">⏭</button>
   </div>
 
@@ -561,7 +572,9 @@ function loadSong(index) {
 function playSong() {
   audio.play();
 
-  playBtn.textContent = "⏸";
+  playBtn.innerHTML = `
+    <span class="stop-icon"></span>
+  `;
 
   player.classList.add("playing");
 
@@ -572,7 +585,7 @@ function playSong() {
 function pauseSong() {
   audio.pause();
 
-  playBtn.textContent = "▶";
+  playBtn.innerHTML = "▶";
 
   player.classList.remove("playing");
 
