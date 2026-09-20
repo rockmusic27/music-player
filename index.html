@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Music</title><style>
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,92 +16,160 @@
   --panel: #171717;
   --gray: #8b8b8b;
   --white: #f5f5f5;
-  --border: rgba(255,255,255,0.09);
+  --border: rgba(255,255,255,0.12);
 }
+
+/* =========================
+   BACKGROUND
+========================= */
 
 body {
   min-height: 100vh;
+
   color: var(--white);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   overflow-x: hidden;
 
-  background:
-    linear-gradient(
-      rgba(0,0,0,0.42),
-      rgba(0,0,0,0.58)
-    ),
+  /* عکس بدون لایه‌ی مشکی */
+  background-image:
     url("361db2becb4ced56a1af3109f6b026c3.jpg");
 
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+
+  position: relative;
 }
 
+/* هاله‌ی روی کل صفحه تقریباً حذف شده */
 body::before {
   content: "";
+
   position: fixed;
+
   inset: 0;
 
   background:
     radial-gradient(
       circle at center,
-      rgba(0,0,0,0.05),
-      rgba(0,0,0,0.45)
+      rgba(0,0,0,0),
+      rgba(0,0,0,0.08)
     );
 
   pointer-events: none;
+
   z-index: 0;
 }
 
+
+/* =========================
+   GLASS MUSIC PLAYER
+========================= */
+
 .player {
+
   position: relative;
+
   z-index: 2;
 
   width: min(455px, 94%);
+
   margin: 35px auto;
+
   padding: 26px;
 
-  border: 1px solid rgba(255,255,255,0.12);
+  border:
+    1px solid
+    rgba(255,255,255,0.16);
+
   border-radius: 30px;
 
-  background: rgba(15,15,15,0.28);
+  /*
+    شفافیت خیلی بیشتر
+    تصویر پشت پلیر دیده می‌شود
+  */
+  background:
+    rgba(10,10,10,0.10);
 
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /*
+    بلور کم تا بک‌گراند
+    واضح باقی بماند
+  */
+  backdrop-filter:
+    blur(3px);
 
+  -webkit-backdrop-filter:
+    blur(3px);
+
+  /*
+    سایه‌ی خیلی نرم
+  */
   box-shadow:
-    0 25px 70px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.08);
+    0 25px 70px
+    rgba(0,0,0,0.22),
+
+    inset 0 1px 0
+    rgba(255,255,255,0.12);
+
 }
+
+
+/* خط نور بالای پلیر */
 
 .player::before {
+
   content: "";
+
   position: absolute;
+
   top: 0;
+
   left: 12%;
+
   right: 12%;
+
   height: 1px;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.35),
-    transparent
-  );
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,0.40),
+      transparent
+    );
+
 }
 
+
+/* =========================
+   HEADER
+========================= */
+
 .music-header {
+
   text-align: center;
+
   margin-bottom: 24px;
 
   color: #f1f1f1;
+
   font-size: 22px;
+
   font-weight: 800;
+
   letter-spacing: 6px;
+
   text-transform: uppercase;
 
   text-shadow:
-    0 2px 12px rgba(255,255,255,0.12);
+    0 2px 12px
+    rgba(0,0,0,0.35);
+
 }
 
 .music-header span {
@@ -108,24 +177,38 @@ body::before {
 }
 
 .music-header .star {
+
   color: #fff;
+
   font-size: 16px;
+
   margin-right: 7px;
+
   vertical-align: 2px;
 
   text-shadow:
-    0 0 10px rgba(255,255,255,0.35);
+    0 0 10px
+    rgba(255,255,255,0.35);
+
 }
 
+
+/* =========================
+   COVER
+========================= */
+
 .cover {
+
   position: relative;
 
   width: 270px;
+
   height: 270px;
 
   margin: 5px auto 24px;
 
   border-radius: 50%;
+
   padding: 7px;
 
   background:
@@ -137,157 +220,245 @@ body::before {
     );
 
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 15px 45px rgba(0,0,0,0.8),
-    0 0 50px rgba(255,255,255,0.06);
+
+    0 0 0 1px
+    rgba(255,255,255,0.08),
+
+    0 15px 45px
+    rgba(0,0,0,0.65),
+
+    0 0 50px
+    rgba(255,255,255,0.06);
+
 }
 
 .cover::before {
+
   content: "";
+
   position: absolute;
+
   inset: -8px;
 
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.08);
+
+  border:
+    1px solid
+    rgba(255,255,255,0.08);
 
   pointer-events: none;
+
 }
 
 .cover img {
+
   width: 100%;
+
   height: 100%;
 
   display: block;
+
   object-fit: cover;
 
   border-radius: 50%;
+
   transform: rotate(0deg);
+
 }
 
 .cover.spinning img {
-  animation: spin 12s linear infinite;
+
+  animation:
+    spin 12s linear infinite;
+
 }
 
 .cover.paused img {
-  animation-play-state: paused;
+
+  animation-play-state:
+    paused;
+
 }
 
 @keyframes spin {
+
   from {
-    transform: rotate(0deg);
+    transform:
+      rotate(0deg);
   }
 
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
+
 }
 
+
+/* =========================
+   SONG INFO
+========================= */
+
 .song-info {
+
   text-align: center;
+
   margin-bottom: 22px;
+
 }
 
 .song-info h1 {
+
   color: var(--white);
 
   font-size: 25px;
+
   font-weight: 700;
 
   margin-bottom: 7px;
+
+  text-shadow:
+    0 2px 8px
+    rgba(0,0,0,0.35);
+
 }
 
 .song-info p {
+
   color: #8a8a8a;
 
   font-size: 14px;
+
   letter-spacing: 1.5px;
 
   text-transform: uppercase;
+
 }
+
+
+/* =========================
+   PROGRESS
+========================= */
 
 .progress-container {
   margin-top: 8px;
 }
 
 .progress {
+
   appearance: none;
 
   width: 100%;
+
   height: 5px;
 
   border-radius: 10px;
 
-  background: #303030;
+  background:
+    rgba(20,20,20,0.45);
+
   cursor: pointer;
+
 }
 
 .progress::-webkit-slider-thumb {
+
   appearance: none;
 
   width: 14px;
+
   height: 14px;
 
   border-radius: 50%;
 
   background: #e0e0e0;
 
-  border: 2px solid #111;
+  border:
+    2px solid
+    rgba(10,10,10,0.75);
 
   box-shadow:
-    0 0 0 2px rgba(255,255,255,0.12),
-    0 3px 8px rgba(0,0,0,0.7);
+
+    0 0 0 2px
+    rgba(255,255,255,0.12),
+
+    0 3px 8px
+    rgba(0,0,0,0.45);
+
 }
 
 .progress::-moz-range-thumb {
+
   width: 14px;
+
   height: 14px;
 
   border-radius: 50%;
 
   background: #e0e0e0;
 
-  border: 2px solid #111;
+  border:
+    2px solid
+    rgba(10,10,10,0.75);
+
 }
 
 .time {
+
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
 
   margin-top: 8px;
 
   color: #686868;
 
   font-size: 11px;
+
   font-weight: 600;
+
 }
 
+
+/* =========================
+   CONTROLS
+========================= */
+
 .controls {
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   gap: 22px;
 
   margin: 24px 0 18px;
+
 }
 
 .controls button {
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   width: 48px;
+
   height: 48px;
 
-  border: 1px solid rgba(255,255,255,0.07);
+  border:
+    1px solid
+    rgba(255,255,255,0.10);
+
   border-radius: 50%;
 
   background:
-    linear-gradient(
-      145deg,
-      #292929,
-      #151515
-    );
+    rgba(20,20,20,0.35);
 
   color: #ddd;
 
@@ -296,63 +467,91 @@ body::before {
   cursor: pointer;
 
   box-shadow:
-    0 8px 18px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.06);
 
-  transition: 0.2s;
+    0 8px 18px
+    rgba(0,0,0,0.28),
+
+    inset 0 1px 0
+    rgba(255,255,255,0.08);
+
+  transition:
+    0.2s;
+
 }
 
 .controls button:hover {
-  transform: translateY(-2px);
+
+  transform:
+    translateY(-2px);
 
   background:
-    linear-gradient(
-      145deg,
-      #3b3b3b,
-      #202020
-    );
+    rgba(55,55,55,0.45);
 
   color: white;
+
 }
 
 .controls .play {
+
   width: 58px;
+
   height: 58px;
+
   font-size: 20px;
+
 }
 
 .controls .play,
 .controls .play:hover,
 .controls .play:focus,
 .controls .play:active {
+
   color: #ddd !important;
-  -webkit-text-fill-color: #ddd !important;
+
+  -webkit-text-fill-color:
+    #ddd !important;
+
 }
 
 .stop-icon {
+
   width: 14px;
+
   height: 14px;
 
   background: #ddd;
+
   border-radius: 2px;
 
   display: block;
+
 }
 
+
+/* =========================
+   VISUALIZER
+========================= */
+
 .visualizer {
+
   height: 38px;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   gap: 4px;
 
   margin: 4px 0 20px;
+
 }
 
 .bar {
+
   width: 4px;
+
   height: 7px;
 
   border-radius: 10px;
@@ -363,22 +562,50 @@ body::before {
       #555,
       #aaa
     );
+
 }
 
 .player.playing .bar {
+
   animation:
-    bounce 0.65s ease-in-out infinite alternate;
+    bounce
+    0.65s
+    ease-in-out
+    infinite
+    alternate;
+
 }
 
-.bar:nth-child(1) { animation-delay: .05s; }
-.bar:nth-child(2) { animation-delay: .15s; }
-.bar:nth-child(3) { animation-delay: .25s; }
-.bar:nth-child(4) { animation-delay: .35s; }
-.bar:nth-child(5) { animation-delay: .45s; }
-.bar:nth-child(6) { animation-delay: .25s; }
-.bar:nth-child(7) { animation-delay: .15s; }
+.bar:nth-child(1) {
+  animation-delay: .05s;
+}
+
+.bar:nth-child(2) {
+  animation-delay: .15s;
+}
+
+.bar:nth-child(3) {
+  animation-delay: .25s;
+}
+
+.bar:nth-child(4) {
+  animation-delay: .35s;
+}
+
+.bar:nth-child(5) {
+  animation-delay: .45s;
+}
+
+.bar:nth-child(6) {
+  animation-delay: .25s;
+}
+
+.bar:nth-child(7) {
+  animation-delay: .15s;
+}
 
 @keyframes bounce {
+
   from {
     height: 6px;
   }
@@ -386,21 +613,32 @@ body::before {
   to {
     height: 34px;
   }
+
 }
 
+
+/* =========================
+   PLAYLIST
+========================= */
+
 .playlist {
+
   margin-top: 6px;
 
   padding-top: 18px;
 
   border-top:
-    1px solid rgba(255,255,255,0.07);
+    1px solid
+    rgba(255,255,255,0.10);
+
 }
 
 .playlist-title {
+
   color: #666;
 
   font-size: 10px;
+
   font-weight: 700;
 
   letter-spacing: 3px;
@@ -408,63 +646,67 @@ body::before {
   text-transform: uppercase;
 
   margin-bottom: 12px;
+
 }
 
 .track {
+
   display: flex;
+
   align-items: center;
 
   gap: 12px;
 
   padding: 10px;
+
   margin-bottom: 7px;
 
-  border: 1px solid transparent;
+  border:
+    1px solid
+    transparent;
+
   border-radius: 15px;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,0.045),
-      rgba(255,255,255,0.018)
-    );
+    rgba(255,255,255,0.035);
 
   cursor: pointer;
 
-  transition: .2s;
+  transition:
+    .2s;
+
 }
 
 .track:hover {
-  transform: translateX(3px);
+
+  transform:
+    translateX(3px);
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.09),
-      rgba(255,255,255,.035)
-    );
+    rgba(255,255,255,0.075);
 
   border-color:
-    rgba(255,255,255,.07);
+    rgba(255,255,255,0.08);
+
 }
 
 .track.active {
+
   background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.12),
-      rgba(255,255,255,.045)
-    );
+    rgba(255,255,255,0.10);
 
   border-color:
-    rgba(255,255,255,.12);
+    rgba(255,255,255,0.12);
 
   box-shadow:
     inset 3px 0 0 #aaa;
+
 }
 
 .track img {
+
   width: 50px;
+
   height: 50px;
 
   flex-shrink: 0;
@@ -474,15 +716,21 @@ body::before {
   border-radius: 10px;
 
   box-shadow:
-    0 5px 12px rgba(0,0,0,.5);
+    0 5px 12px
+    rgba(0,0,0,.35);
+
 }
 
 .track-info {
+
   flex: 1;
+
   min-width: 0;
+
 }
 
 .track-info strong {
+
   display: block;
 
   color: #ddd;
@@ -490,11 +738,15 @@ body::before {
   font-size: 14px;
 
   white-space: nowrap;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
+
 }
 
 .track-info span {
+
   display: block;
 
   color: #666;
@@ -502,20 +754,30 @@ body::before {
   font-size: 11px;
 
   margin-top: 4px;
+
 }
 
 .track-number {
+
   color: #555;
 
   font-size: 10px;
+
   font-weight: bold;
 
   letter-spacing: 1px;
+
 }
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:650px) {
 
   .player {
+
     width: 94%;
 
     margin: 18px auto;
@@ -523,39 +785,74 @@ body::before {
     padding: 20px;
 
     border-radius: 25px;
+
+    background:
+      rgba(10,10,10,0.10);
+
+    backdrop-filter:
+      blur(3px);
+
+    -webkit-backdrop-filter:
+      blur(3px);
+
   }
 
   .music-header {
+
     font-size: 19px;
+
     letter-spacing: 5px;
+
   }
 
   .cover {
+
     width: 225px;
+
     height: 225px;
+
   }
 
   .song-info h1 {
+
     font-size: 22px;
+
   }
 
   .controls {
+
     gap: 17px;
+
   }
 
   .controls .play {
+
     width: 54px;
+
     height: 54px;
+
   }
+
 }
-</style></head><body><div class="player" id="player">  <div class="music-header">
-    <span class="star">★</span>
-    <span>MY</span> MUSIC
-  </div>  <div class="cover" id="cover">
-    <img id="coverImage" src="" alt="Cover">
-  </div>  <div class="song-info">
-    <h1 id="songTitle">Heart-Shaped Box</h1>
-    <p id="songArtist">Nirvana</p>
+
+</style></head><body><div class="player" id="player">  <div class="music-header"><span class="star">★</span>
+
+<span>MY</span> MUSIC
+
+  </div>  <div class="cover" id="cover"><img
+  id="coverImage"
+  src=""
+  alt="Cover"
+>
+
+  </div>  <div class="song-info"><h1 id="songTitle">
+  Heart-Shaped Box
+</h1>
+
+<p id="songArtist">
+  Nirvana
+</p>
+
   </div>  <div class="progress-container"><input
   type="range"
   id="progress"
@@ -566,17 +863,31 @@ body::before {
 >
 
 <div class="time">
-  <span id="currentTime">0:00</span>
-  <span id="duration">0:00</span>
+
+  <span id="currentTime">
+    0:00
+  </span>
+
+  <span id="duration">
+    0:00
+  </span>
+
 </div>
 
-  </div>  <div class="controls"><button id="prevBtn">⏮</button>
+  </div>  <div class="controls"><button id="prevBtn">
+  ⏮
+</button>
 
-<button id="playBtn" class="play">
+<button
+  id="playBtn"
+  class="play"
+>
   ▶
 </button>
 
-<button id="nextBtn">⏭</button>
+<button id="nextBtn">
+  ⏭
+</button>
 
   </div>  <div class="visualizer"><div class="bar"></div>
 <div class="bar"></div>
@@ -599,27 +910,49 @@ body::before {
 const songs = [
 
   {
-    title: "Heart-Shaped Box",
-    artist: "Nirvana",
-    url: "8_144453842814116031.mp3",
-    cover: "f85c6b753d8aaba1aaee705201dac270.jpg"
+    title:
+      "Heart-Shaped Box",
+
+    artist:
+      "Nirvana",
+
+    url:
+      "8_144453842814116031.mp3",
+
+    cover:
+      "f85c6b753d8aaba1aaee705201dac270.jpg"
   },
 
   {
-    title: "Pink Maggit",
-    artist: "Deftones",
-    url: "8_144492326763558406.mp3",
-    cover: "9783d4b54a4a2651eeb5125621dd15a5.jpg"
+    title:
+      "Pink Maggit",
+
+    artist:
+      "Deftones",
+
+    url:
+      "8_144492326763558406.mp3",
+
+    cover:
+      "9783d4b54a4a2651eeb5125621dd15a5.jpg"
   },
 
   {
-    title: "Kill Me Fast",
-    artist: "Three Days Grace",
-    url: "Kill%20Me%20Fast.mp3",
-    cover: "cropped-cover.avif"
+    title:
+      "Kill Me Fast",
+
+    artist:
+      "Three Days Grace",
+
+    url:
+      "Kill%20Me%20Fast.mp3",
+
+    cover:
+      "cropped-cover.avif"
   }
 
 ];
+
 
 const audio =
   document.getElementById("audio");
@@ -660,7 +993,9 @@ const playlist =
 const player =
   document.getElementById("player");
 
+
 let currentIndex = 0;
+
 
 function formatTime(seconds) {
 
@@ -668,15 +1003,21 @@ function formatTime(seconds) {
     return "0:00";
 
   const minutes =
-    Math.floor(seconds / 60);
+    Math.floor(
+      seconds / 60
+    );
 
   const secs =
-    Math.floor(seconds % 60)
-      .toString()
-      .padStart(2, "0");
+    Math.floor(
+      seconds % 60
+    )
+    .toString()
+    .padStart(2, "0");
 
   return `${minutes}:${secs}`;
+
 }
+
 
 function loadSong(index) {
 
@@ -700,7 +1041,8 @@ function loadSong(index) {
   coverImage.alt =
     song.title;
 
-  progress.value = 0;
+  progress.value =
+    0;
 
   currentTime.textContent =
     "0:00";
@@ -708,14 +1050,21 @@ function loadSong(index) {
   duration.textContent =
     "0:00";
 
-  cover.classList.remove("spinning");
-  cover.classList.remove("paused");
+  cover.classList.remove(
+    "spinning"
+  );
+
+  cover.classList.remove(
+    "paused"
+  );
 
   updatePlaylist();
 
   document.title =
     `${song.title} - ${song.artist}`;
+
 }
+
 
 function playSong() {
 
@@ -725,35 +1074,56 @@ function playSong() {
     <span class="stop-icon"></span>
   `;
 
-  player.classList.add("playing");
+  player.classList.add(
+    "playing"
+  );
 
-  cover.classList.add("spinning");
-  cover.classList.remove("paused");
+  cover.classList.add(
+    "spinning"
+  );
+
+  cover.classList.remove(
+    "paused"
+  );
+
 }
+
 
 function pauseSong() {
 
   audio.pause();
 
-  playBtn.innerHTML = "▶";
+  playBtn.innerHTML =
+    "▶";
 
-  player.classList.remove("playing");
+  player.classList.remove(
+    "playing"
+  );
 
-  cover.classList.add("paused");
+  cover.classList.add(
+    "paused"
+  );
+
 }
+
 
 playBtn.addEventListener(
   "click",
   () => {
 
     if (audio.paused) {
+
       playSong();
+
     } else {
+
       pauseSong();
+
     }
 
   }
 );
+
 
 prevBtn.addEventListener(
   "click",
@@ -762,15 +1132,21 @@ prevBtn.addEventListener(
     currentIndex--;
 
     if (currentIndex < 0) {
+
       currentIndex =
         songs.length - 1;
+
     }
 
-    loadSong(currentIndex);
+    loadSong(
+      currentIndex
+    );
+
     playSong();
 
   }
 );
+
 
 nextBtn.addEventListener(
   "click",
@@ -778,15 +1154,24 @@ nextBtn.addEventListener(
 
     currentIndex++;
 
-    if (currentIndex >= songs.length) {
+    if (
+      currentIndex >=
+      songs.length
+    ) {
+
       currentIndex = 0;
+
     }
 
-    loadSong(currentIndex);
+    loadSong(
+      currentIndex
+    );
+
     playSong();
 
   }
 );
+
 
 audio.addEventListener(
   "timeupdate",
@@ -796,24 +1181,32 @@ audio.addEventListener(
       return;
 
     progress.value =
-      (audio.currentTime /
-      audio.duration) * 100;
+      (
+        audio.currentTime /
+        audio.duration
+      ) * 100;
 
     currentTime.textContent =
-      formatTime(audio.currentTime);
+      formatTime(
+        audio.currentTime
+      );
 
   }
 );
+
 
 audio.addEventListener(
   "loadedmetadata",
   () => {
 
     duration.textContent =
-      formatTime(audio.duration);
+      formatTime(
+        audio.duration
+      );
 
   }
 );
+
 
 progress.addEventListener(
   "input",
@@ -823,11 +1216,13 @@ progress.addEventListener(
       return;
 
     audio.currentTime =
-      (progress.value / 100) *
-      audio.duration;
+      (
+        progress.value / 100
+      ) * audio.duration;
 
   }
 );
+
 
 audio.addEventListener(
   "ended",
@@ -835,31 +1230,45 @@ audio.addEventListener(
 
     currentIndex++;
 
-    if (currentIndex >= songs.length) {
+    if (
+      currentIndex >=
+      songs.length
+    ) {
+
       currentIndex = 0;
+
     }
 
-    loadSong(currentIndex);
+    loadSong(
+      currentIndex
+    );
+
     playSong();
 
   }
 );
 
+
 function updatePlaylist() {
 
-  playlist.innerHTML = "";
+  playlist.innerHTML =
+    "";
 
   songs.forEach(
     (song, index) => {
 
       const track =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       track.className =
         "track" +
-        (index === currentIndex
-          ? " active"
-          : "");
+        (
+          index === currentIndex
+            ? " active"
+            : ""
+        );
 
       track.innerHTML = `
         <img
@@ -880,7 +1289,8 @@ function updatePlaylist() {
         </div>
 
         <div class="track-number">
-          ${String(index + 1).padStart(2, "0")}
+          ${String(index + 1)
+            .padStart(2, "0")}
         </div>
       `;
 
@@ -889,16 +1299,21 @@ function updatePlaylist() {
         () => {
 
           loadSong(index);
+
           playSong();
 
         }
       );
 
-      playlist.appendChild(track);
+      playlist.appendChild(
+        track
+      );
 
     }
   );
+
 }
+
 
 loadSong(0);
 
